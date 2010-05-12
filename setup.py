@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-from app-metrics import VERSION
+from app_metrics import VERSION
 
 
 f = open(os.path.join(os.path.dirname(__file__), 'README.txt'))
