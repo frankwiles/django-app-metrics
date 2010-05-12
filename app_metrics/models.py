@@ -33,19 +33,19 @@ class Metric(models.Model):
 class MetricItem(models.Model): 
     """ Individual metric items """ 
     metric = models.ForeignKey(Metric)
-    count  = models.IntegerField(default=1)
+    num  = models.IntegerField(default=1)
     created = models.DateField(default=datetime.datetime.now)
 
     def __unicode__(self): 
         return "'%s' of %d on %s" % ( self.metric.name, 
-                                      self.count, 
+                                      self.num, 
                                       self.created )
 
 class MetricDay(models.Model): 
     """ Aggregation of Metrics on a per day basis """ 
     metric  = models.ForeignKey(Metric)
-    count   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.datetime.now)
+    num   = models.BigIntegerField(default=0)
+    created = models.DateField(default=datetime.date.today)
 
     def __unicode__(self): 
         return "'%s' for '%s'" % (self.metric.name, self.created)
@@ -53,8 +53,8 @@ class MetricDay(models.Model):
 class MetricWeek(models.Model): 
     """ Aggregation of Metrics on a weekly basis """ 
     metric  = models.ForeignKey(Metric)
-    count   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.datetime.now)
+    num   = models.BigIntegerField(default=0)
+    created = models.DateField(default=datetime.date.today)
 
     def __unicode__(self): 
         return "'%s' for week %d of %d" % (self.metric.name, 
@@ -63,8 +63,8 @@ class MetricWeek(models.Model):
 class MetricMonth(models.Model): 
     """ Aggregation of Metrics on monthly basis """ 
     metric  = models.ForeignKey(Metric)
-    count   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.datetime.now)
+    num   = models.BigIntegerField(default=0)
+    created = models.DateField(default=datetime.date.today)
 
     def __unicode__(self): 
         return "'%s' for %s %s" % (self.metric.name, 
@@ -75,8 +75,8 @@ class MetricMonth(models.Model):
 class MetricYear(models.Model): 
     """ Aggregation of Metrics on a yearly basis """ 
     metric  = models.ForeignKey(Metric)
-    count   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.datetime.now)
+    num   = models.BigIntegerField(default=0)
+    created = models.DateField(default=datetime.date.today)
 
     def __unicode__(self): 
         return "'%s' for month of '%s'" % (self.metric.name, 

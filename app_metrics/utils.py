@@ -26,7 +26,7 @@ def create_metric(name=None, slug=None, email_recipients=None, no_email=False, d
 class InvalidMetricsBackend(Exception): pass 
 class MetricError(Exception): pass 
 
-def metric(slug=None, count=1):
+def metric(slug=None, num=1):
     """ Increment a metric """ 
    
     backend_string = getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
@@ -38,6 +38,6 @@ def metric(slug=None, count=1):
         raise InvalidMetricsBackend("Could not load '%s' as a backend" % backend_string )
 
     #try: 
-    backend.metric(slug, count)
+    backend.metric(slug, num)
     #except: 
         #raise MetricError('Unable to capture metric')
