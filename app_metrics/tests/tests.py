@@ -1,6 +1,7 @@
 from django.test import TestCase 
 
 from django.contrib.auth.models import User 
+from django.conf import settings 
 
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
 from app_metrics.utils import metric, create_metric  
@@ -14,7 +15,7 @@ class MetricCreationTests(TestCase):
     def test_metric(self): 
 
         new_metric = create_metric(name='Test Metric Class',
-                                   slug='test_metric'
+                                   slug='test_metric',
                                    email_recipients=[self.user1, self.user2])
 
         metric('test_metric')

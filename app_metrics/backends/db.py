@@ -1,4 +1,4 @@
-from app_metrics import Metric, MetricItem 
+from app_metrics.models import Metric, MetricItem 
 
 def metric(slug=None, count=1): 
     """ Record our metric in the database """ 

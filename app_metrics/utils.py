@@ -1,19 +1,23 @@
 from django.conf import settings 
+from django.utils.importlib import import_module 
 
 from app_metrics.models import Metric, MetricItem 
 
-def create_metric(name=None, slug=None, email_recipients=None, no_email=None, daily=True, weekly=False, monthly=False):
+def create_metric(name=None, slug=None, email_recipients=None, no_email=False, daily=True, weekly=False, monthly=False):
     """ Create a new type of metric to track """ 
     try: 
         new_metric = Metric(
                             name=name, 
                             slug=slug, 
-                            email_recipients=email_recipients, 
                             no_email=no_email,
                             daily=daily, 
                             weekly=weekly,
                             monthly=monthly)
+
         new_metric.save()
+        for e in email_recipients: 
+            new_metric.email_recipients.add(e)
+
     except: 
         return False 
 
@@ -24,16 +28,16 @@ class MetricError(Exception): pass
 
 def metric(slug=None, count=1):
     """ Increment a metric """ 
-    
+   
+    backend_string = getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
+
     # Attempt to import the backend 
     try: 
-        backend_string = settings.get('APP_METRICS_BACKEND', 'app_metrics.backends.db')
-        backend = __import__(backend_string)
-
+        backend = import_module(backend_string)
     except: 
         raise InvalidMetricsBackend("Could not load '%s' as a backend" % backend_string )
 
-    try: 
-        backend.metric(slug, count)
-    except: 
-        raise MetricError('Unable to capture metric')
+    #try: 
+    backend.metric(slug, count)
+    #except: 
+        #raise MetricError('Unable to capture metric')
