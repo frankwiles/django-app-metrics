@@ -51,8 +51,33 @@ class MetricAggregationTests(TestCase):
         metric('test_agg2')
 
 
-    def test_aggregation(self): 
+    def test_daily_aggregation(self): 
         management.call_command('metrics_aggregate')
 
-        days = MetricDay.objects.all() 
-        self.assertEqual(len(days), 2) 
+        day1 = MetricDay.objects.get(metric=self.metric1)
+        day2 = MetricDay.objects.get(metric=self.metric2)
+        self.assertEqual(day1.num, 2)
+        self.assertEqual(day2.num, 3)
+
+    def test_weekly_aggregation(self): 
+        management.call_command('metrics_aggregate')
+        week1 = MetricWeek.objects.get(metric=self.metric1)
+        week2 = MetricWeek.objects.get(metric=self.metric2)
+        self.assertEqual(week1.num, 2)
+        self.assertEqual(week2.num, 3)
+
+    def test_monthly_aggregation(self): 
+        management.call_command('metrics_aggregate')
+        month1 = MetricMonth.objects.get(metric=self.metric1)
+        month2 = MetricMonth.objects.get(metric=self.metric2)
+        self.assertEqual(month1.num, 2)
+        self.assertEqual(month2.num, 3)
+
+    def test_yearly_aggregation(self): 
+        management.call_command('metrics_aggregate')
+        year1 = MetricYear.objects.get(metric=self.metric1)
+        year2 = MetricYear.objects.get(metric=self.metric2)
+        self.assertEqual(year1.num, 2)
+        self.assertEqual(year2.num, 3)
+
+
