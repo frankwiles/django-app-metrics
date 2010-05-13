@@ -65,3 +65,15 @@ def month_for_date(month=None):
 def year_for_date(year=None): 
     return datetime.date(year.year, 01, 01)
 
+def get_previous_month(date=None): 
+    if date.month == 1: 
+        month_change = 12 
+    else: 
+        month_change = date.month - 1 
+    new = date 
+
+    return new.replace(month=month_change)
+
+def get_previous_year(date=None): 
+    new = date 
+    return new.replace(year=new.year-1)

@@ -1,0 +1,5 @@
+*.pyc 
+backends/*.pyc 
+management/*.pyc
+management/commands/*.pyc
+tests/*.pyc

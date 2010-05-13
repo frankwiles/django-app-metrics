@@ -1,3 +1,5 @@
+import datetime 
+
 from django.test import TestCase 
 
 from django.core import management 
@@ -5,7 +7,8 @@ from django.contrib.auth.models import User
 from django.conf import settings 
 
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
-from app_metrics.utils import metric, create_metric  
+from app_metrics.utils import metric, create_metric, get_previous_month, get_previous_year  
+from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday
 
 class MetricCreationTests(TestCase): 
    
@@ -78,7 +81,39 @@ class MetricAggregationTests(TestCase):
 
 class TrendingTests(TestCase): 
     """ Test that our trending logic works """ 
-    pass 
+
+    def setUp(self): 
+        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
+        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
+        self.metric1 = create_metric(name='Test Trending1', slug='test_trend1')
+        self.metric2 = create_metric(name='Test Trending2', slug='test_trend2')
+
+    def test_trending_for_current_day(self): 
+        """ Test current day trending counter """ 
+        metric('test_trend1')
+        metric('test_trend1')
+        management.call_command('metrics_aggregate')
+        metric('test_trend1')
+        metric('test_trend1')
+        
+        count = _trending_for_current_day(self.metric1)
+        self.assertEqual(count,4)
+
+    def test_trending_for_yesterday(self): 
+        """ Test yesterday trending """ 
+        today = datetime.date.today()
+        yesterday_date = today - datetime.timedelta(days=1)
+        previous_week_date = today - datetime.timedelta(weeks=1)
+        previous_month_date = get_previous_month(today)
+
+        MetricDay.objects.create(metric=self.metric1, num=5, created=yesterday_date)
+        MetricDay.objects.create(metric=self.metric1, num=4, created=previous_week_date)
+        MetricDay.objects.create(metric=self.metric1, num=3, created=previous_month_date)
+
+        data = _trending_for_yesterday(self.metric1)
+        self.assertEqual(data['yesterday'], 5)
+        self.assertEqual(data['previous_week'], 4)
+        self.assertEqual(data['previous_month'], 3)
 
 class EmailTests(TestCase): 
     """ Test that our emails send properly """ 
