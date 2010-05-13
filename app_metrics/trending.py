@@ -62,7 +62,7 @@ def _trending_for_yesterday(metric=None):
 
 def _trending_for_week(metric=None):
     this_week_date = week_for_date(datetime.date.today())
-    previous_week_date = this_week_date - datetime.timedelta(week=1) 
+    previous_week_date = this_week_date - datetime.timedelta(weeks=1) 
     previous_month_week_date = get_previous_month(this_week_date)
     previous_year_week_date = get_previous_year(this_week_date)
 
