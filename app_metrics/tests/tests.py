@@ -16,8 +16,7 @@ class MetricCreationTests(TestCase):
     def test_metric(self): 
 
         new_metric = create_metric(name='Test Metric Class',
-                                   slug='test_metric',
-                                   email_recipients=[self.user1, self.user2])
+                                   slug='test_metric')
 
         metric('test_metric')
         metric('test_metric')
@@ -34,14 +33,8 @@ class MetricAggregationTests(TestCase):
     def setUp(self): 
         self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
         self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
-        self.metric1 = create_metric(name='Test Aggregation1',
-                                     slug='test_agg1', 
-                                     email_recipients=[self.user1, self.user2])
-
-        self.metric2 = create_metric(name='Test Aggregation2',
-                                     slug='test_agg2', 
-                                     email_recipients=[self.user1, self.user2])
-
+        self.metric1 = create_metric(name='Test Aggregation1', slug='test_agg1')
+        self.metric2 = create_metric(name='Test Aggregation2', slug='test_agg2')
 
         metric('test_agg1')
         metric('test_agg1')
@@ -61,6 +54,7 @@ class MetricAggregationTests(TestCase):
 
     def test_weekly_aggregation(self): 
         management.call_command('metrics_aggregate')
+
         week1 = MetricWeek.objects.get(metric=self.metric1)
         week2 = MetricWeek.objects.get(metric=self.metric2)
         self.assertEqual(week1.num, 2)
@@ -68,6 +62,7 @@ class MetricAggregationTests(TestCase):
 
     def test_monthly_aggregation(self): 
         management.call_command('metrics_aggregate')
+
         month1 = MetricMonth.objects.get(metric=self.metric1)
         month2 = MetricMonth.objects.get(metric=self.metric2)
         self.assertEqual(month1.num, 2)
@@ -75,9 +70,17 @@ class MetricAggregationTests(TestCase):
 
     def test_yearly_aggregation(self): 
         management.call_command('metrics_aggregate')
+
         year1 = MetricYear.objects.get(metric=self.metric1)
         year2 = MetricYear.objects.get(metric=self.metric2)
         self.assertEqual(year1.num, 2)
         self.assertEqual(year2.num, 3)
 
+class TrendingTests(TestCase): 
+    """ Test that our trending logic works """ 
+    pass 
+
+class EmailTests(TestCase): 
+    """ Test that our emails send properly """ 
+    pass 
 

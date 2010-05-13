@@ -8,11 +8,10 @@ class Metric(models.Model):
     """ The type of metric we want to store """ 
     name    = models.CharField(max_length=50)
     slug    = models.SlugField(unique=True, max_length=60)
-    email_recipients = models.ManyToManyField(User)
-    no_email = models.BooleanField(default=False) 
-    daily   = models.BooleanField(default=True) 
-    weekly  = models.BooleanField(default=False) 
-    monthly = models.BooleanField(default=False) 
+
+    class Meta: 
+        verbose_name = 'Metric' 
+        verbose_name_plural = 'Metrics' 
 
     def __unicode__(self): 
         return self.name 
@@ -30,11 +29,29 @@ class Metric(models.Model):
         else: 
             return super(Metric, self).save(*args, **kwargs)
 
+class MetricSet(models.Model): 
+    """ A set of metrics that should be sent via email to certain users """ 
+    name          = models.CharField(max_length=50)
+    metrics       = models.ManyToManyField(Metric)
+    email_recipients = models.ManyToManyField(User)
+    no_email      = models.BooleanField(default=False) 
+    send_daily    = models.BooleanField(default=True) 
+    send_weekly   = models.BooleanField(default=False) 
+    send_monthly  = models.BooleanField(default=False) 
+
+    class Meta: 
+        verbose_name = 'Metric Set' 
+        verbose_name_plural = 'Metric Sets' 
+
 class MetricItem(models.Model): 
     """ Individual metric items """ 
     metric = models.ForeignKey(Metric)
     num  = models.IntegerField(default=1)
     created = models.DateField(default=datetime.datetime.now)
+
+    class Meta: 
+        verbose_name = 'Metric Item' 
+        verbose_name_plural = 'Metric Items' 
 
     def __unicode__(self): 
         return "'%s' of %d on %s" % ( self.metric.name, 
@@ -47,6 +64,10 @@ class MetricDay(models.Model):
     num   = models.BigIntegerField(default=0)
     created = models.DateField(default=datetime.date.today)
 
+    class Meta: 
+        verbose_name = 'Day Metric' 
+        verbose_name_plural = 'By Day Metrics' 
+
     def __unicode__(self): 
         return "'%s' for '%s'" % (self.metric.name, self.created)
 
@@ -55,6 +76,10 @@ class MetricWeek(models.Model):
     metric  = models.ForeignKey(Metric)
     num   = models.BigIntegerField(default=0)
     created = models.DateField(default=datetime.date.today)
+
+    class Meta: 
+        verbose_name = 'Week Metric' 
+        verbose_name_plural = 'By Week Metrics' 
 
     def __unicode__(self): 
         return "'%s' for week %d of %d" % (self.metric.name, 
@@ -65,6 +90,10 @@ class MetricMonth(models.Model):
     metric  = models.ForeignKey(Metric)
     num   = models.BigIntegerField(default=0)
     created = models.DateField(default=datetime.date.today)
+
+    class Meta: 
+        verbose_name = 'Month Metric' 
+        verbose_name_plural = 'By Month Metrics' 
 
     def __unicode__(self): 
         return "'%s' for %s %s" % (self.metric.name, 
@@ -77,6 +106,10 @@ class MetricYear(models.Model):
     metric  = models.ForeignKey(Metric)
     num   = models.BigIntegerField(default=0)
     created = models.DateField(default=datetime.date.today)
+
+    class Meta: 
+        verbose_name = 'Year Metric' 
+        verbose_name_plural = 'By Year Metrics' 
 
     def __unicode__(self): 
         return "'%s' for month of '%s'" % (self.metric.name, 
