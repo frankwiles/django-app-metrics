@@ -1,0 +1,55 @@
+<html>
+<body>
+<h1>{{ metric_set.name }} Report for {{ today|date:"D d M Y" }}</h1> 
+
+<h2>Today so far</h2> 
+<table> 
+    {% for m in metrics %} 
+    <tr> 
+        <td>{{ m.metric.name }}</td>
+        <td>{{ m.trends.current_day }}</td> 
+    </tr> 
+{% endfor %} 
+</table> 
+
+<h2>Yesterday</h2> 
+<table> 
+    {% for m in metrics %} 
+    <tr> 
+        <td>{{ m.metric.name }}</td>
+        <td>{{ m.trends.current_day }}</td> 
+    </tr> 
+{% endfor %} 
+</table> 
+
+<h3>Week to Date</h3> 
+<table> 
+    {% for m in metrics %} 
+    <tr> 
+        <td>{{ m.metric.name }}</td>
+        <td>{{ m.trends.current_day }}</td> 
+    </tr> 
+{% endfor %} 
+</table> 
+
+<h3>Month to Date</h3> 
+<table> 
+    {% for m in metrics %} 
+    <tr> 
+        <td>{{ m.metric.name }}</td>
+        <td>{{ m.trends.current_day }}</td> 
+    </tr> 
+{% endfor %} 
+</table> 
+
+<h3>Year to Date</h3> 
+<table> 
+    {% for m in metrics %} 
+    <tr> 
+        <td>{{ m.metric.name }}</td>
+        <td>{{ m.trends.current_day }}</td> 
+    </tr> 
+{% endfor %} 
+</table> 
+</body>
+</html>

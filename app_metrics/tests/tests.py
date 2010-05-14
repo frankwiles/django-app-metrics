@@ -1,14 +1,17 @@
 import datetime 
 
 from django.test import TestCase 
-
 from django.core import management 
-from django.contrib.auth.models import User 
 from django.conf import settings 
+from django.core import mail 
+from django.contrib.auth.models import User 
+
+from notification.engine import send_all as notification_send_all 
+from mailer.engine import send_all as mailer_send_all
 
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
 from app_metrics.utils import * 
-from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week 
+from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year 
 
 class MetricCreationTests(TestCase): 
    
@@ -133,7 +136,72 @@ class TrendingTests(TestCase):
         self.assertEqual(data['previous_month_week'],3)
         self.assertEqual(data['previous_year_week'],2)
 
+    def test_trending_for_month(self): 
+        """ Test monthly trending data """ 
+        this_month_date = month_for_date(datetime.date.today())
+        previous_month_date = get_previous_month(this_month_date)
+        previous_month_year_date = get_previous_year(this_month_date)
+
+        MetricMonth.objects.create(metric=self.metric1, num=5, created=this_month_date)
+        MetricMonth.objects.create(metric=self.metric1, num=4, created=previous_month_date)
+        MetricMonth.objects.create(metric=self.metric1, num=3, created=previous_month_year_date)
+
+        data = _trending_for_month(self.metric1)
+        self.assertEqual(data['month'],5)
+        self.assertEqual(data['previous_month'],4)
+        self.assertEqual(data['previous_month_year'],3)
+
+    def test_trending_for_year(self): 
+        """ Test yearly trending data """ 
+        this_year_date = year_for_date(datetime.date.today())
+        previous_year_date = get_previous_year(this_year_date)
+
+        MetricYear.objects.create(metric=self.metric1, num=5, created=this_year_date)
+        MetricYear.objects.create(metric=self.metric1, num=4, created=previous_year_date)
+
+        data = _trending_for_year(self.metric1)
+        self.assertEqual(data['year'],5)
+        self.assertEqual(data['previous_year'],4)
+
+    def test_missing_trending(self): 
+        this_week_date = week_for_date(datetime.date.today())
+        previous_week_date = this_week_date - datetime.timedelta(weeks=1)
+        previous_month_date = get_previous_month(this_week_date)
+        previous_year_date = get_previous_year(this_week_date)
+
+        MetricWeek.objects.create(metric=self.metric1, num=5, created=this_week_date)
+        MetricWeek.objects.create(metric=self.metric1, num=4, created=previous_week_date)
+        MetricWeek.objects.create(metric=self.metric1, num=3, created=previous_month_date)
+       
+        data = _trending_for_week(self.metric1)
+        self.assertEqual(data['week'],5)
+        self.assertEqual(data['previous_week'],4)
+        self.assertEqual(data['previous_month_week'],3)
+        self.assertEqual(data['previous_year_week'],None)
+
 class EmailTests(TestCase): 
     """ Test that our emails send properly """ 
-    pass 
+    def setUp(self): 
+        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
+        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
+        self.metric1 = create_metric(name='Test Trending1', slug='test_trend1')
+        self.metric2 = create_metric(name='Test Trending2', slug='test_trend2')
+        self.set = create_metric_set(name="Fake Report",
+                                     metrics=[self.metric1, self.metric2],
+                                     email_recipients=[self.user1, self.user2])
 
+    def test_email(self): 
+        """ Test email sending """ 
+        metric('test_trend1')
+        metric('test_trend1')
+        metric('test_trend1')
+        metric('test_trend2')
+        metric('test_trend2')
+
+        management.call_command('metrics_aggregate')
+        management.call_command('metrics_send_mail')
+
+        notification_send_all()
+        mailer_send_all()
+
+        self.assertEqual(len(mail.outbox), 2)

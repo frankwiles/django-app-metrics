@@ -1,5 +1,7 @@
 import datetime 
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear 
 from app_metrics.utils import week_for_date, month_for_date, year_for_date, get_previous_month, get_previous_year 
 
@@ -46,17 +48,29 @@ def _trending_for_yesterday(metric=None):
     previous_week_date = today - datetime.timedelta(weeks=1)
     previous_month_date = get_previous_month(today)
 
-    yesterday = MetricDay.objects.get(metric=metric, created=yesterday_date)
-    previous_week = MetricDay.objects.get(metric=metric, created=previous_week_date)
-    previous_month = MetricDay.objects.get(metric=metric, created=previous_month_date)
+    data = {
+            'yesterday': None, 
+            'previous_week': None, 
+            'previous_month': None,
+    }
 
-    data = {}
-    if yesterday: 
+    try: 
+        yesterday = MetricDay.objects.get(metric=metric, created=yesterday_date)
         data['yesterday'] = yesterday.num 
-    if previous_week: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try:  
+        previous_week = MetricDay.objects.get(metric=metric, created=previous_week_date)
         data['previous_week'] = previous_week.num 
-    if previous_month: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_month = MetricDay.objects.get(metric=metric, created=previous_month_date)
         data['previous_month'] = previous_month.num
+    except ObjectDoesNotExist: 
+        pass 
 
     return data 
 
@@ -66,20 +80,36 @@ def _trending_for_week(metric=None):
     previous_month_week_date = get_previous_month(this_week_date)
     previous_year_week_date = get_previous_year(this_week_date)
 
-    week = MetricWeek.objects.get(metric=metric, created=this_week_date) 
-    previous_week = MetricWeek.objects.get(metric=metric, created=previous_week_date)
-    previous_month_week = MetricWeek.objects.get(metric=metric, created=previous_month_week_date)
-    previous_year_week = MetricWeek.objects.get(metric=metric, created=previous_year_week_date)
+    data = {
+            'week': None,
+            'previous_week': None,
+            'previous_month_week': None,
+            'previous_year_week': None,
+    }
 
-    data = {}
-    if week: 
+    try: 
+        week = MetricWeek.objects.get(metric=metric, created=this_week_date) 
         data['week'] = week.num 
-    if previous_week: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_week = MetricWeek.objects.get(metric=metric, created=previous_week_date)
         data['previous_week'] = previous_week.num 
-    if previous_month_week: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_month_week = MetricWeek.objects.get(metric=metric, created=previous_month_week_date)
         data['previous_month_week'] = previous_month_week.num 
-    if previous_year_week: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_year_week = MetricWeek.objects.get(metric=metric, created=previous_year_week_date)
         data['previous_year_week'] = previous_year_week.num 
+    except ObjectDoesNotExist: 
+        pass 
 
     return data 
 
@@ -88,21 +118,51 @@ def _trending_for_month(metric=None):
     previous_month_date = get_previous_month(this_month_date)
     previous_month_year_date = get_previous_year(this_month_date)
 
-    month = MetricMonth.objects.get(metric=metric, created=this_month_date)
-    previous_month = MetricMonth.objects.get(metric=metric, created=previous_month_date) 
-    previous_month_year = MetricMonth.objects.get(metric=metric, created=previous_month_year_date)
+    data = {
+            'month': None,
+            'previous_month': None,
+            'previous_month_year': None
+    }
 
-    data = {}
-    if month: 
+    try: 
+        month = MetricMonth.objects.get(metric=metric, created=this_month_date)
         data['month'] = month.num 
-    if previous_month: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_month = MetricMonth.objects.get(metric=metric, created=previous_month_date) 
         data['previous_month'] = previous_month.num 
-    if previous_month_year: 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_month_year = MetricMonth.objects.get(metric=metric, created=previous_month_year_date)
         data['previous_month_year'] = previous_month_year.num 
+    except ObjectDoesNotExist: 
+        pass 
 
     return data 
 
 def _trending_for_year(metric=None):
     this_year_date = year_for_date(datetime.date.today())
+    previous_year_date = get_previous_year(this_year_date)
 
-    # TODO 
+    data = { 
+            'year': None, 
+            'previous_year': None, 
+    }
+
+    try: 
+        year = MetricYear.objects.get(metric=metric, created=this_year_date)
+        data['year'] = year.num 
+    except ObjectDoesNotExist: 
+        pass 
+
+    try: 
+        previous_year = MetricYear.objects.get(metric=metric, created=previous_year_date)
+        data['previous_year'] = previous_year.num 
+    except ObjectDoesNotExist: 
+        pass 
+
+    return data 

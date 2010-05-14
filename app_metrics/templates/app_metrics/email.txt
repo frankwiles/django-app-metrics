@@ -1,0 +1,29 @@
+
+{{ metric_set.name }} Report for {{ today|date:"D d M Y" }}
+-----------------------------------------------------------
+
+So far Today: 
+{% for m in metrics %} 
+{{ m.metric.name }}  {{ m.trends.current_day }} 
+{% endfor %} 
+
+Yesterday: 
+{% for m in metrics %} 
+{{ m.metric.name }}  {{ m.trends.yesterday }} 
+{% endfor %} 
+
+Week: 
+{% for m in metrics %} 
+{{ m.metric.name }}  {{ m.trends.week }} 
+{% endfor %} 
+
+Month: 
+{% for m in metrics %} 
+{{ m.metric.name }}  {{ m.trends.month }} 
+{% endfor %} 
+
+Year: 
+{% for m in metrics %} 
+{{ m.metric.name }}  {{ m.trends.year }} 
+{% endfor %} 
+
