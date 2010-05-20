@@ -1,6 +1,6 @@
 from django.contrib import admin 
 
-from app_metrics.models import Metric, MetricSet, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear 
+from app_metrics.models import Metric, MetricSet, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
 
 class MetricAdmin(admin.ModelAdmin): 
     model = Metric 
@@ -36,5 +36,3 @@ class MetricYearAdmin(admin.ModelAdmin):
     model = MetricYear
 
 admin.site.register(MetricYear, MetricYearAdmin) 
-
-

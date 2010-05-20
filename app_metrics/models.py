@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Metric(models.Model): 
     """ The type of metric we want to store """ 
     name    = models.CharField(max_length=50)
-    slug    = models.SlugField(unique=True, max_length=60)
+    slug    = models.SlugField(unique=True, max_length=60, db_index=True)
 
     class Meta: 
         verbose_name = 'Metric' 
