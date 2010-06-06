@@ -28,14 +28,16 @@ def create_metric_set(name=None, metrics=None, email_recipients=None, no_email=F
 
 def create_metric(name=None, slug=None): 
     """ Create a new type of metric to track """ 
-    try: 
+
+    # See if this metric already exists 
+    existing = Metric.objects.filter(name=name, slug=slug) 
+
+    if existing: 
+        return False 
+    else: 
         new_metric = Metric(name=name, slug=slug)
         new_metric.save()
-
-    except Exception as e: 
-        return False 
-
-    return new_metric 
+        return new_metric 
 
 class InvalidMetricsBackend(Exception): pass 
 class MetricError(Exception): pass 
