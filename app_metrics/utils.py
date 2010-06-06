@@ -32,7 +32,7 @@ def create_metric(name=None, slug=None):
         new_metric = Metric(name=name, slug=slug)
         new_metric.save()
 
-    except: 
+    except Exception as e: 
         return False 
 
     return new_metric 
