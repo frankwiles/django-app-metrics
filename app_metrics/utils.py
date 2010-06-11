@@ -53,10 +53,10 @@ def metric(slug=None, num=1):
     except: 
         raise InvalidMetricsBackend("Could not load '%s' as a backend" % backend_string )
 
-    #try: 
-    backend.metric(slug, num)
-    #except: 
-        #raise MetricError('Unable to capture metric')
+    try: 
+        backend.metric(slug, num)
+    except Metric.DoesNotExist: 
+        create_metric(slug=slug, name='Autocreated Metric')
 
 def week_for_date(date=None): 
     return date - datetime.timedelta(days=date.weekday())
