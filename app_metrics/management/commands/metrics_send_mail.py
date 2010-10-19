@@ -51,5 +51,5 @@ class Command(NoArgsCommand):
                 send_mail(subject=subject,
                           message=message, 
                           from_email=settings.DEFAULT_FROM_EMAIL, 
-                          recipient_list=s.email_recipients)
+                          recipient_list=s.email_recipients.all())
 

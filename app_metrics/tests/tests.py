@@ -6,9 +6,6 @@ from django.conf import settings
 from django.core import mail 
 from django.contrib.auth.models import User 
 
-from notification.engine import send_all as notification_send_all 
-from mailer.engine import send_all as mailer_send_all
-
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
 from app_metrics.utils import * 
 from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year 
@@ -201,7 +198,4 @@ class EmailTests(TestCase):
         management.call_command('metrics_aggregate')
         management.call_command('metrics_send_mail')
 
-        notification_send_all()
-        mailer_send_all()
-
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(len(mail.outbox), 1)

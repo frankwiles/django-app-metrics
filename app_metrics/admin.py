@@ -7,13 +7,8 @@ class MetricAdmin(admin.ModelAdmin):
 
 admin.site.register(Metric, MetricAdmin)
 
-class MetricInline(admin.StackedInline):
-    model = Metric 
-    extra = 1 
-
 class MetricSetAdmin(admin.ModelAdmin): 
      model = MetricSet
-     inlines = [MetricInline]
 
 admin.site.register(MetricSet, MetricSetAdmin) 
 
