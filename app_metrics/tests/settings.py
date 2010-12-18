@@ -1,6 +1,6 @@
-DATABASE_ENGINE='postgresql_psycopg2'
+DATABASE_ENGINE='sqlite3'
 DATABASE_NAME='test_app_metrics'
-
+SITE_ID = 1
 DEBUG = True 
 
 INSTALLED_APPS = [
