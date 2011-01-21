@@ -49,9 +49,9 @@ def _trending_for_yesterday(metric=None):
     previous_month_date = get_previous_month(today)
 
     data = {
-            'yesterday': None, 
-            'previous_week': None, 
-            'previous_month': None,
+            'yesterday': 0, 
+            'previous_week': 0, 
+            'previous_month': 0,
     }
 
     try: 
@@ -81,10 +81,10 @@ def _trending_for_week(metric=None):
     previous_year_week_date = get_previous_year(this_week_date)
 
     data = {
-            'week': None,
-            'previous_week': None,
-            'previous_month_week': None,
-            'previous_year_week': None,
+            'week': 0,
+            'previous_week': 0,
+            'previous_month_week': 0,
+            'previous_year_week': 0,
     }
 
     try: 
@@ -119,9 +119,9 @@ def _trending_for_month(metric=None):
     previous_month_year_date = get_previous_year(this_month_date)
 
     data = {
-            'month': None,
-            'previous_month': None,
-            'previous_month_year': None
+            'month': 0,
+            'previous_month': 0,
+            'previous_month_year': 0
     }
 
     try: 
@@ -149,8 +149,8 @@ def _trending_for_year(metric=None):
     previous_year_date = get_previous_year(this_year_date)
 
     data = { 
-            'year': None, 
-            'previous_year': None, 
+            'year': 0, 
+            'previous_year': 0, 
     }
 
     try: 
