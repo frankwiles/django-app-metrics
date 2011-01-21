@@ -14,40 +14,73 @@
 
 <h2>Yesterday</h2> 
 <table> 
+    <tr>
+        <th></th>
+        <th>Yesterday</th>
+        <th>Prev Week</th>
+        <th>Prev Month</th>
+    </tr>
     {% for m in metrics %} 
     <tr> 
         <td>{{ m.metric.name }}</td>
-        <td>{{ m.trends.current_day }}</td> 
+        <td>{{ m.trends.yesterday.yesterday }}</td>
+        <td>{{ m.trends.yesterday.previous_week }}</td>
+        <td>{{ m.trends.yesterday.previous_month }}</td>
     </tr> 
 {% endfor %} 
 </table> 
 
 <h3>Week to Date</h3> 
 <table> 
+    <tr>
+        <th></th>
+        <th>Week to Date</th>
+        <th>Last Week</th>
+        <th>This Week Last Month</th>
+        <th>This Week Last Year</th>
+    </tr>
     {% for m in metrics %} 
     <tr> 
         <td>{{ m.metric.name }}</td>
         <td>{{ m.trends.current_day }}</td> 
+        <td>{{ m.trends.week.week }}</td>
+        <td>{{ m.trends.week.previous_week }}</td>
+        <td>{{ m.trends.week.previous_month_week }}</td>
+        <td>{{ m.trends.week.previous_year_week }}</td>
     </tr> 
 {% endfor %} 
 </table> 
 
 <h3>Month to Date</h3> 
 <table> 
+    <tr>
+        <th></th>
+        <th>Month to Date</th>
+        <th>Last Month</th>
+        <th>This Month Last Year</th>
+    </tr>
     {% for m in metrics %} 
     <tr> 
         <td>{{ m.metric.name }}</td>
-        <td>{{ m.trends.current_day }}</td> 
+        <td>{{ m.trends.month.month }}</td>
+        <td>{{ m.trends.month.previous_month }}</td>
+        <td>{{ m.trends.month.previous_year_month }}</td>
     </tr> 
 {% endfor %} 
 </table> 
 
 <h3>Year to Date</h3> 
 <table> 
+    <tr>
+        <th></th>
+        <th>Year to Date</th>
+        <th>Last Year</th>
+    </tr>
     {% for m in metrics %} 
     <tr> 
         <td>{{ m.metric.name }}</td>
-        <td>{{ m.trends.current_day }}</td> 
+        <td>{{ m.trends.year.year }}</td> 
+        <td>{{ m.trends.year.previous_year }}</td> 
     </tr> 
 {% endfor %} 
 </table> 
