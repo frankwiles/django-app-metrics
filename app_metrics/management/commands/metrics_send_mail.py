@@ -32,27 +32,29 @@ class Command(NoArgsCommand):
 
         if "mailer" in settings.INSTALLED_APPS: 
             from mailer import send_html_mail 
-            SEND_HTML = True 
+            USE_MAILER = True 
         else: 
-            from django.core.mail import send_mail 
-            SEND_HTML = False 
+            from django.core.mail import EmailMultiAlternatives
+            USE_MAILER = False 
 
         for s in qs: 
             subject = "%s Report" % s.name 
 
             recipient_list = s.email_recipients.values_list('email', flat=True)
+            
+            (message, message_html) = generate_report(s, html=True)
 
-            if SEND_HTML: 
-                (message, message_html) = generate_report(s, html=True)
+            if USE_MAILER: 
                 send_html_mail(subject=subject, 
                                message=message, 
                                message_html=message_html, 
                                from_email=settings.DEFAULT_FROM_EMAIL, 
                                recipient_list=recipient_list)
             else: 
-                message = generate_report(s)
-                send_mail(subject=subject,
-                          message=message, 
-                          from_email=settings.DEFAULT_FROM_EMAIL, 
-                          recipient_list=recipient_list)
+                msg = EmailMultiAlternatives(subject=subject,
+                                             body=message,
+                                             from_email=settings.DEFAULT_FROM_EMAIL,
+                                             to=recipient_list)
+                msg.attach_alternative(message_html, "text/html")
+                msg.send()
 
