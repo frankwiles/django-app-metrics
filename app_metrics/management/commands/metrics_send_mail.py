@@ -2,6 +2,7 @@ import datetime
 
 from django.core.management.base import NoArgsCommand 
 from django.conf import settings 
+from django.db.models import Q
 
 from app_metrics.reports import generate_report
 
@@ -27,7 +28,7 @@ class Command(NoArgsCommand):
         else: 
             send_monthly = False 
 
-        qs = MetricSet.objects.filter(send_daily=True, no_email=False, send_monthly=send_monthly, send_weekly=send_weekly)
+        qs = MetricSet.objects.filter(Q(no_email=False), Q(send_daily=True) | Q(send_monthly=send_monthly) | Q(send_weekly=send_weekly))
 
         if "mailer" in settings.INSTALLED_APPS: 
             from mailer import send_html_mail 
