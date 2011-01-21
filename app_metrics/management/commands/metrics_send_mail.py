@@ -39,17 +39,19 @@ class Command(NoArgsCommand):
         for s in qs: 
             subject = "%s Report" % s.name 
 
+            recipient_list = s.email_recipients.values_list('email', flat=True)
+
             if SEND_HTML: 
                 (message, message_html) = generate_report(s, html=True)
                 send_html_mail(subject=subject, 
                                message=message, 
                                message_html=message_html, 
                                from_email=settings.DEFAULT_FROM_EMAIL, 
-                               recipient_list=s.email_recipients.all())
+                               recipient_list=recipient_list)
             else: 
                 message = generate_report(s)
                 send_mail(subject=subject,
                           message=message, 
                           from_email=settings.DEFAULT_FROM_EMAIL, 
-                          recipient_list=s.email_recipients.all())
+                          recipient_list=recipient_list)
 
