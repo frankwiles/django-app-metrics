@@ -24,7 +24,7 @@ def trending_for_metric(metric=None, date=None):
     data['yesterday']   = _trending_for_yesterday(metric) 
     data['week']        = _trending_for_week(metric) 
     data['month']       = _trending_for_month(metric) 
-    data['year']        = _trending_for_month(metric) 
+    data['year']        = _trending_for_year(metric) 
 
     return data 
 
