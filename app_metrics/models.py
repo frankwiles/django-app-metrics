@@ -43,6 +43,9 @@ class MetricSet(models.Model):
         verbose_name = 'Metric Set' 
         verbose_name_plural = 'Metric Sets' 
 
+    def __unicode__(self):
+        return self.name 
+
 class MetricItem(models.Model): 
     """ Individual metric items """ 
     metric = models.ForeignKey(Metric)
