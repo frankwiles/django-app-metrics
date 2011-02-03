@@ -174,7 +174,7 @@ class TrendingTests(TestCase):
         self.assertEqual(data['week'],5)
         self.assertEqual(data['previous_week'],4)
         self.assertEqual(data['previous_month_week'],3)
-        self.assertEqual(data['previous_year_week'],None)
+        self.assertEqual(data['previous_year_week'],0)
 
 class EmailTests(TestCase): 
     """ Test that our emails send properly """ 
