@@ -17,6 +17,10 @@ setup(
     author_email='frank@revsys.com',
     url='http://github.com/frankwiles/django-app-metrics/tree/master',
     packages=find_packages(),
+    install_requires = [
+        'celery',
+        'django-celery',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
