@@ -3,7 +3,7 @@ from django.core.management.base import NoArgsCommand
 
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear 
 
-from app_metrics.utils import week_for_date, month_for_date, year_for_date
+from app_metrics.utils import week_for_date, month_for_date, year_for_date, get_backend 
 
 class Command(NoArgsCommand): 
     help = "Aggregate Application Metrics" 
@@ -12,6 +12,13 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options): 
         """ Aggregate Application Metrics """ 
+
+        backend = get_backend() 
+
+        # If using Mixpanel this command is a NOOP
+        if backend == 'app_metrics.backends.mixpanel': 
+            print "Useless use of metrics_aggregate when using Mixpanel backend"
+            return 
 
         # Aggregate Items
         items = MetricItem.objects.all() 
