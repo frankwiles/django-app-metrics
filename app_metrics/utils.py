@@ -4,8 +4,17 @@ from django.utils.importlib import import_module
 
 from app_metrics.models import Metric, MetricSet, MetricItem 
 
+def get_backend(): 
+     return getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
+
 def create_metric_set(name=None, metrics=None, email_recipients=None, no_email=False, send_daily=True, send_weekly=False, send_monthly=False): 
     """ Create a metric set """ 
+
+    # This should be a NOOP for the mixpanel backend 
+    backend = get_backend()
+    if backend == 'app_metrics.backends.mixpanel': 
+        return 
+
     try: 
         metric_set = MetricSet(
                             name=name, 
@@ -26,8 +35,13 @@ def create_metric_set(name=None, metrics=None, email_recipients=None, no_email=F
 
     return metric_set 
 
-def create_metric(name=None, slug=None): 
+def create_metric(name, slug): 
     """ Create a new type of metric to track """ 
+
+    # Make this a NOOP for the mixpanel backend 
+    backend = get_backend() 
+    if backend == 'app_metrics.backends.mixpanel': 
+        return 
 
     # See if this metric already exists 
     existing = Metric.objects.filter(name=name, slug=slug) 
@@ -42,7 +56,7 @@ def create_metric(name=None, slug=None):
 class InvalidMetricsBackend(Exception): pass 
 class MetricError(Exception): pass 
 
-def metric(slug=None, num=1):
+def metric(slug, num=1, **kwargs):
     """ Increment a metric """ 
    
     backend_string = getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
@@ -54,20 +68,20 @@ def metric(slug=None, num=1):
         raise InvalidMetricsBackend("Could not load '%s' as a backend" % backend_string )
 
     try: 
-        backend.metric(slug, num)
+        backend.metric(slug, num, **kwargs)
     except Metric.DoesNotExist: 
         create_metric(slug=slug, name='Autocreated Metric')
 
-def week_for_date(date=None): 
+def week_for_date(date): 
     return date - datetime.timedelta(days=date.weekday())
 
-def month_for_date(month=None): 
+def month_for_date(month): 
     return month - datetime.timedelta(days=month.day-1)
 
-def year_for_date(year=None): 
+def year_for_date(year): 
     return datetime.date(year.year, 01, 01)
 
-def get_previous_month(date=None): 
+def get_previous_month(date): 
     if date.month == 1: 
         month_change = 12 
     else: 
@@ -76,6 +90,6 @@ def get_previous_month(date=None):
 
     return new.replace(month=month_change)
 
-def get_previous_year(date=None): 
+def get_previous_year(date): 
     new = date 
     return new.replace(year=new.year-1)

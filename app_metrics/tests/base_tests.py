@@ -12,10 +12,6 @@ from app_metrics.trending import _trending_for_current_day, _trending_for_yester
 
 class MetricCreationTests(TestCase): 
    
-    def setUp(self): 
-        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
-        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
-
     def test_metric(self): 
 
         new_metric = create_metric(name='Test Metric Class',
@@ -34,8 +30,6 @@ class MetricCreationTests(TestCase):
 class MetricAggregationTests(TestCase): 
 
     def setUp(self): 
-        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
-        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
         self.metric1 = create_metric(name='Test Aggregation1', slug='test_agg1')
         self.metric2 = create_metric(name='Test Aggregation2', slug='test_agg2')
 
@@ -83,8 +77,8 @@ class TrendingTests(TestCase):
     """ Test that our trending logic works """ 
 
     def setUp(self): 
-        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
-        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
+        #self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
+        #self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
         self.metric1 = create_metric(name='Test Trending1', slug='test_trend1')
         self.metric2 = create_metric(name='Test Trending2', slug='test_trend2')
 
@@ -194,7 +188,7 @@ class EmailTests(TestCase):
         metric('test_trend1')
         metric('test_trend2')
         metric('test_trend2')
-
+        
         management.call_command('metrics_aggregate')
         management.call_command('metrics_send_mail')
 
