@@ -1,6 +1,6 @@
 from app_metrics.models import Metric, MetricItem 
 
-def metric(slug=None, num=1): 
+def metric(slug, num=1, **kwargs): 
     """ Record our metric in the database """ 
     met = Metric.objects.get(slug=slug)
 

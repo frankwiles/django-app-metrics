@@ -14,3 +14,6 @@ INSTALLED_APPS = [
 ]
 
 ROOT_URLCONF = 'app_metrics.tests.urls'
+
+APP_METRICS_BACKEND = 'app_metrics.backends.db'
+APP_METRICS_MIXPANEL_TOKEN = None 

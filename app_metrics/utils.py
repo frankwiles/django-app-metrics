@@ -26,7 +26,7 @@ def create_metric_set(name=None, metrics=None, email_recipients=None, no_email=F
 
     return metric_set 
 
-def create_metric(name=None, slug=None): 
+def create_metric(name, slug): 
     """ Create a new type of metric to track """ 
 
     # See if this metric already exists 
@@ -42,7 +42,7 @@ def create_metric(name=None, slug=None):
 class InvalidMetricsBackend(Exception): pass 
 class MetricError(Exception): pass 
 
-def metric(slug=None, num=1):
+def metric(slug, num=1, **kwargs):
     """ Increment a metric """ 
    
     backend_string = getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
@@ -54,7 +54,7 @@ def metric(slug=None, num=1):
         raise InvalidMetricsBackend("Could not load '%s' as a backend" % backend_string )
 
     try: 
-        backend.metric(slug, num)
+        backend.metric(slug, num, **kwargs)
     except Metric.DoesNotExist: 
         create_metric(slug=slug, name='Autocreated Metric')
 
