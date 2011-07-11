@@ -5,6 +5,13 @@ import urllib2
 
 from django.conf import settings 
 from celery.decorators import task 
+from app_metrics.models import Metric, MetricItem 
+
+@task 
+def db_metric_task(slug, num=1, **kwargs): 
+    met = Metric.objects.get(slug=slug)
+
+    new_metric = MetricItem.objects.create(metric=met, num=num)
 
 def _get_token(): 
     token = getattr(settings, 'APP_METRICS_MIXPANEL_TOKEN', None) 
