@@ -5,7 +5,14 @@ import urllib2
 
 from django.conf import settings 
 from celery.decorators import task 
-from app_metrics.backends.mixpanel import _get_token
+
+def _get_token(): 
+    token = getattr(settings, 'APP_METRICS_MIXPANEL_TOKEN', None) 
+
+    if not token: 
+        raise ImproperlyConfigured("You must define APP_METRICS_MIXPANEL_TOKEN when using the mixpanel backend.") 
+    else: 
+        return token 
 
 @task 
 def mixpanel_metric_task(slug, num, properties=None, **kwargs):
