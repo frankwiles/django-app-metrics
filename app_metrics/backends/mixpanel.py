@@ -5,10 +5,6 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from app_metrics.tasks import mixpanel_metric_task
 
-class MixPanelTrackError(Exception):
-    pass
-
-
 def metric(slug, num=1, properties=None): 
     """
     Send metric directly to Mixpanel

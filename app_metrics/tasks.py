@@ -6,7 +6,9 @@ import urllib2
 from django.conf import settings 
 from celery.decorators import task 
 from app_metrics.models import Metric, MetricItem 
-from app_metrics.backends.mixpanel import MixPanelTrackError
+
+class MixPanelTrackError(Exception):
+    pass
 
 @task 
 def db_metric_task(slug, num=1, **kwargs): 
