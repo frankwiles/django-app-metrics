@@ -6,6 +6,7 @@ import urllib2
 from django.conf import settings 
 from celery.decorators import task 
 from app_metrics.models import Metric, MetricItem 
+from app_metrics.backends.mixpanel import MixPanelTrackError
 
 @task 
 def db_metric_task(slug, num=1, **kwargs): 
@@ -40,3 +41,5 @@ def mixpanel_metric_task(slug, num, properties=None, **kwargs):
     req = urllib2.Request(url, data) 
     for i in range(num):
         response = urllib2.urlopen(req) 
+        if response.read() == '0':
+            raise MixPanelTrackError(u'MixPanel returned 0')

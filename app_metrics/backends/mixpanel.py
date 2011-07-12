@@ -5,13 +5,9 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from app_metrics.tasks import mixpanel_metric_task
 
-def _get_token(): 
-    token = getattr(settings, 'APP_METRICS_MIXPANEL_TOKEN', None) 
+class MixPanelTrackError(Exception):
+    pass
 
-    if not token: 
-        raise ImproperlyConfigured("You must define APP_METRICS_MIXPANEL_TOKEN when using the mixpanel backend.") 
-    else: 
-        return token 
 
 def metric(slug, num=1, properties=None): 
     """
@@ -25,5 +21,4 @@ def metric(slug, num=1, properties=None):
       metric("invite-friends",
              properties={"method": "email", "number-friends": "12", "ip": "123.123.123.123"})
     """
-    token = _get_token()
     mixpanel_metric_task.delay(slug, num, properties) 
