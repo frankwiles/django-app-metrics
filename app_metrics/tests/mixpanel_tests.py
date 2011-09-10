@@ -24,7 +24,7 @@ class MixpanelCreationTests(TestCase):
         settings.APP_METRICS_BACKEND = 'app_metrics.backends.mixpanel'
         settings.APP_METRICS_MIXPANEL_TOKEN = 'foobar'
 
-    def test_mtric(self): 
+    def test_metric(self): 
         metric('testing') 
 
     def tearDown(self): 
