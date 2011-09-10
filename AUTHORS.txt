@@ -3,4 +3,5 @@ django-app-metrics was originally created by Frank Wiles <frank@revsys.com>
 Thanks to all of our contributors! 
 
 Ross Poulton <ross@rossp.org> 
+Flavio Curella <flavio@storymarket.com>
 
