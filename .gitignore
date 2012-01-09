@@ -1,4 +1,5 @@
-syntax: glob
-*pyc
+*.pyc
+*.egg-info
 build
-*egg-info
+dist
+MANIFEST
