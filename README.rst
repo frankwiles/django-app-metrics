@@ -61,14 +61,16 @@ Usage
 Backends
 ========
 
-app_metrics.backends.db (Default) - This backend stores all metrics and
-aggregations in your database. NOTE: Every call to metric() generates a
+``app_metrics.backends.db`` (Default) - This backend stores all metrics and
+aggregations in your database. NOTE: Every call to ``metric()`` generates a
 database write, which may decrease your overall performance is you go nuts
 with them or have a heavily traffic site.
 
-app_metrics.backends.mixpanel - This backend allows you to pipe all of your
-calls to metric() to Mixpanel.com See http://mixpanel.com/api/docs/ for more
-information on their API.
+``app_metrics.backends.mixpanel`` - This backend allows you to pipe all of
+your calls to ``metric()`` to Mixpanel. See the `Mixpanel documentation`_
+for more information on their API.
+
+.. _`Mixpanel documentation`: http://mixpanel.com/docs/api-documentation
 
 Settings
 ========
