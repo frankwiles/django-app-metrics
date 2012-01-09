@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 from app_metrics import VERSION
 
 
-f = open(os.path.join(os.path.dirname(__file__), 'README.txt'))
+f = open(os.path.join(os.path.dirname(__file__), 'README.rst'))
 readme = f.read()
 f.close()
 
