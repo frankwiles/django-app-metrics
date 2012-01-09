@@ -15,8 +15,13 @@ setup(
     long_description=readme,
     author='Frank Wiles',
     author_email='frank@revsys.com',
-    url='http://github.com/frankwiles/django-app-metrics/tree/master',
+    url='https://github.com/frankwiles/django-app-metrics',
     packages=find_packages(),
+    package_data={
+        'app_metrics': [
+            'templates/app_metrics/*',
+        ]
+    },
     install_requires = [
         'celery',
         'django-celery',
