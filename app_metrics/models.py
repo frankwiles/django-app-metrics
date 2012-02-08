@@ -85,8 +85,9 @@ class MetricWeek(models.Model):
         verbose_name_plural = 'By Week Metrics' 
 
     def __unicode__(self): 
-        return "'%s' for week %d of %d" % (self.metric.name, 
-                                           self.created.strftime("%m"))
+        return "'%s' for week %s of %s" % (self.metric.name, 
+                                           self.created.strftime("%U"),
+                                           self.created.strftime("%Y"))
 
 class MetricMonth(models.Model): 
     """ Aggregation of Metrics on monthly basis """ 
