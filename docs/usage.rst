@@ -43,7 +43,7 @@ like::
 
     manage.py metrics_aggregate
 
-metrics_sent_mail
+metrics_send_mail
 -----------------
 
 Send email reports to users. The email will be sent out using django_mailer_'s ``send_htmlmailer`` if it is installed, otherwise defaults to django.core.mail_. Can be called like::
