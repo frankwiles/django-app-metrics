@@ -13,13 +13,29 @@ from app_metrics.trending import _trending_for_current_day, _trending_for_yester
 class MetricCreationTests(TestCase): 
    
     def test_metric(self): 
-
         new_metric = create_metric(name='Test Metric Class',
                                    slug='test_metric')
 
         metric('test_metric')
         metric('test_metric')
         metric('test_metric')
+
+        current_count = MetricItem.objects.filter(metric=new_metric)
+        self.assertEqual(len(current_count), 3)
+        self.assertEqual(current_count[0].num, 1)
+        self.assertEqual(current_count[1].num, 1)
+        self.assertEqual(current_count[2].num, 1)
+
+    def test_get_or_create_metric(self):
+        new_metric = get_or_create_metric(name='Test Metric Class',
+                                          slug='test_metric')
+
+        metric('test_metric')
+        metric('test_metric')
+        metric('test_metric')
+
+        new_metric = get_or_create_metric(name='Test Metric Class',
+                                          slug='test_metric')
 
         current_count = MetricItem.objects.filter(metric=new_metric)
         self.assertEqual(len(current_count), 3)
@@ -193,3 +209,4 @@ class EmailTests(TestCase):
         management.call_command('metrics_send_mail')
 
         self.assertEqual(len(mail.outbox), 1)
+
