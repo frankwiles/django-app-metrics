@@ -1,9 +1,5 @@
-from app_metrics.models import Metric, MetricItem 
+from app_metrics.tasks import db_metric_task 
 
-def metric(slug=None, num=1): 
-    """ Record our metric in the database """ 
-    met = Metric.objects.get(slug=slug)
-
-    new_metric = MetricItem(metric=met, num=num)
-    new_metric.save() 
-
+def metric(slug, num=1, **kwargs): 
+    """ Fire a celery task to record our metric in the database """ 
+    db_metric_task.delay(slug, num, **kwargs) 
