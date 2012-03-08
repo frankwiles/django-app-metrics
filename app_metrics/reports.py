@@ -17,7 +17,7 @@ def generate_report(metric_set=None, html=False):
         data['trends'] = trending_for_metric(m)
         metric_trends.append(data)
 
-    send_zero_activity = getattr(settings, 'METRICS_SEND_ZERO_ACTIVITY', True)
+    send_zero_activity = getattr(settings, 'APP_METRICS_SEND_ZERO_ACTIVITY', True)
 
     if not send_zero_activity:
         activity_today = False

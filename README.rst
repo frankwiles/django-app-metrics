@@ -81,7 +81,7 @@ Settings
 
 ``APP_METRICS_MIXPANEL_URL`` - Allow overriding of the API URL end point
 
-``METRICS_SEND_ZERO_ACTIVITY`` - Prevent e-amils being sent when there's been 
+``APP_METRICS_SEND_ZERO_ACTIVITY`` - Prevent e-mails being sent when there's been 
 no activity today (i.e. during testing). Defaults to `True`.
 
 TODO
