@@ -44,6 +44,9 @@ class Command(NoArgsCommand):
             
             (message, message_html) = generate_report(s, html=True)
 
+            if message == None:
+                continue
+
             if USE_MAILER: 
                 send_html_mail(subject=subject, 
                                message=message, 
