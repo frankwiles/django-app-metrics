@@ -26,6 +26,9 @@ The plan is to add in redis and celery capture and aggregation as well in the
 future. NOTE: Every call to metric() generates a data write, which may decrease
 your overall performance is you go nuts with them or have a large site. 
 
+Set `METRICS_SEND_ZERO_ACTIVITY` to `False` in your settings.py file to stop
+django-app-metrics from sending you e-mails on days when there's been no activity.
+
 Usage 
 =====
 
