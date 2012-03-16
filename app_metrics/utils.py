@@ -53,6 +53,16 @@ def create_metric(name, slug):
         new_metric.save()
         return new_metric 
 
+def get_or_create_metric(name, slug):
+    """ Returns the metric with the given name and slug, creating it if necessary """
+
+    backend = get_backend() 
+    if backend == 'app_metrics.backends.mixpanel': 
+        return 
+    
+    metric, created = Metric.objects.get_or_create(name=name, slug=slug)
+    return metric
+
 class InvalidMetricsBackend(Exception): pass 
 class MetricError(Exception): pass 
 
@@ -93,3 +103,4 @@ def get_previous_month(date):
 def get_previous_year(date): 
     new = date 
     return new.replace(year=new.year-1)
+
