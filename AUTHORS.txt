@@ -6,3 +6,4 @@ Ross Poulton <ross@rossp.org>
 Flavio Curella <flavio@storymarket.com>
 Jacob Burch <jacobburch@revsys.com>
 Jannis Leidel <jezdez@enn.io>
+Flávio Juvenal<flaviojuvenal@gmail.com>
