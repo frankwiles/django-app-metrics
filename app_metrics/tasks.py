@@ -1,5 +1,5 @@
 import base64
-import json 
+import json
 import urllib
 import urllib2
 
@@ -10,35 +10,38 @@ except ImportError:
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from app_metrics.models import Metric, MetricItem 
+
+from app_metrics.models import Metric, MetricItem
 
 
 class MixPanelTrackError(Exception):
     pass
 
-@task 
-def db_metric_task(slug, num=1, **kwargs): 
+
+@task
+def db_metric_task(slug, num=1, **kwargs):
     met = Metric.objects.get(slug=slug)
+    MetricItem.objects.create(metric=met, num=num)
 
-    new_metric = MetricItem.objects.create(metric=met, num=num)
 
-def _get_token(): 
-    token = getattr(settings, 'APP_METRICS_MIXPANEL_TOKEN', None) 
+def _get_token():
+    token = getattr(settings, 'APP_METRICS_MIXPANEL_TOKEN', None)
 
-    if not token: 
-        raise ImproperlyConfigured("You must define APP_METRICS_MIXPANEL_TOKEN when using the mixpanel backend.") 
-    else: 
-        return token 
+    if not token:
+        raise ImproperlyConfigured("You must define APP_METRICS_MIXPANEL_TOKEN when using the mixpanel backend.")
+    else:
+        return token
 
-@task 
+
+@task
 def mixpanel_metric_task(slug, num, properties=None, **kwargs):
 
     token = _get_token()
-    if properties == None: 
-        properties = dict() 
+    if properties == None:
+        properties = dict()
 
-    if "token" not in properties: 
-        properties["token"] = token 
+    if "token" not in properties:
+        properties["token"] = token
 
     url = getattr(settings, 'APP_METRICS_MIXPANEL_API_URL', "http://api.mixpanel.com/track/")
 
@@ -46,8 +49,8 @@ def mixpanel_metric_task(slug, num, properties=None, **kwargs):
     b64_data = base64.b64encode(json.dumps(params))
 
     data = urllib.urlencode({"data": b64_data})
-    req = urllib2.Request(url, data) 
+    req = urllib2.Request(url, data)
     for i in range(num):
-        response = urllib2.urlopen(req) 
+        response = urllib2.urlopen(req)
         if response.read() == '0':
             raise MixPanelTrackError(u'MixPanel returned 0')
