@@ -3,9 +3,13 @@ import json
 import urllib
 import urllib2
 
-from django.conf import settings 
+try:
+    from celery.task import task
+except ImportError:
+    from celery.decorators import task
+
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from celery.decorators import task 
 from app_metrics.models import Metric, MetricItem 
 
 
