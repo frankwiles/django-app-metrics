@@ -13,6 +13,13 @@ from django.core.exceptions import ImproperlyConfigured
 
 from app_metrics.models import Metric, MetricItem
 
+try:
+    # Not required. If we do this once at the top of the module, we save
+    # ourselves the pain of importing every time the task fires.
+    import statsd
+except ImportError:
+    statsd = None
+
 
 class MixPanelTrackError(Exception):
     pass
@@ -54,3 +61,18 @@ def mixpanel_metric_task(slug, num, properties=None, **kwargs):
         response = urllib2.urlopen(req)
         if response.read() == '0':
             raise MixPanelTrackError(u'MixPanel returned 0')
+
+
+@task
+def statsd_metric_task(slug, num=1, **kwargs):
+    if statsd is None:
+        raise ImproperlyConfigured("You must install 'python-statsd' in order to use this backend.")
+
+    conn = statsd.Connection(
+        host=getattr(settings, 'APP_METRICS_STATSD_HOST', 'localhost'),
+        port=int(getattr(settings, 'APP_METRICS_STATSD_PORT', 8125)),
+        sample_rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)),
+    )
+
+    counter = statsd.Counter(slug, connection=conn)
+    counter += num
