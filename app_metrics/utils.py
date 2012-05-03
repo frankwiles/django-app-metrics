@@ -14,11 +14,13 @@ def should_create_models(backend=None):
     return backend == 'app_metrics.backends.db'
 
 
-def create_metric_set(name=None, metrics=None, email_recipients=None, no_email=False, send_daily=True, send_weekly=False, send_monthly=False):
+def create_metric_set(name=None, metrics=None, email_recipients=None,
+        no_email=False, send_daily=True, send_weekly=False,
+        send_monthly=False):
     """ Create a metric set """
 
     # This should be a NOOP for the non-database-backed backends
-    if should_create_models():
+    if not should_create_models():
         return
 
     try:
@@ -45,7 +47,7 @@ def create_metric(name, slug):
     """ Create a new type of metric to track """
 
     # This should be a NOOP for the non-database-backed backends
-    if should_create_models():
+    if not should_create_models():
         return
 
     # See if this metric already exists
@@ -59,10 +61,13 @@ def create_metric(name, slug):
         return new_metric
 
 def get_or_create_metric(name, slug):
-    """ Returns the metric with the given name and slug, creating it if necessary """
+    """
+    Returns the metric with the given name and slug, creating
+    it if necessary
+    """
 
     # This should be a NOOP for the non-database-backed backends
-    if should_create_models():
+    if not should_create_models():
         return
 
     metric, created = Metric.objects.get_or_create(name=name, slug=slug)

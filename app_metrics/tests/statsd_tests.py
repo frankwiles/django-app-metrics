@@ -8,7 +8,7 @@ class StatsdCreationTests(TestCase):
     def setUp(self):
         super(StatsdCreationTests, self).setUp()
         self.old_backend = getattr(settings, 'APP_METRICS_BACKEND', None)
-        settings.APP_METRICS_BACKEND = 'app_metrics.backends.statsd_backend'
+        settings.APP_METRICS_BACKEND = 'app_metrics.backends.statsd'
 
     def test_metric(self):
         with mock.patch('statsd.Client') as mock_client:

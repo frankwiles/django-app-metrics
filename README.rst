@@ -72,17 +72,37 @@ for more information on their API.
 
 .. _`Mixpanel documentation`: http://mixpanel.com/docs/api-documentation
 
+``app_metrics.backends.statsd`` - This backend allows you to pipe all of your
+calls to ``metric()`` to a statsd server. See `statsd`_ for more information
+on their API.
+
+.. _`statsd`: https://github.com/etsy/statsd
+
 Settings
 ========
 
 ``APP_METRICS_BACKEND`` - Defaults to 'app_metrics.backends.db' if not defined.
 
+``APP_METRICS_SEND_ZERO_ACTIVITY`` - Prevent e-mails being sent when there's been
+no activity today (i.e. during testing). Defaults to `True`.
+
+Mixpanel Settings
+-----------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.mixpanel'.
+
 ``APP_METRICS_MIXPANEL_TOKEN`` - Your Mixpanel.com API token
 
 ``APP_METRICS_MIXPANEL_URL`` - Allow overriding of the API URL end point
 
-``APP_METRICS_SEND_ZERO_ACTIVITY`` - Prevent e-mails being sent when there's been 
-no activity today (i.e. during testing). Defaults to `True`.
+Statsd Settings
+---------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.statsd'.
+
+``APP_METRICS_STATSD_HOST`` - Hostname of statsd server, defaults to 'localhost'
+
+``APP_METRICS_STATSD_PORT`` - statsd port, defaults to '8125'
+
+``APP_METRICS_STATSD_SAMPLE_RATE`` - statds sample rate, defaults to 1
 
 TODO
 ====
