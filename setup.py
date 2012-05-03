@@ -26,7 +26,7 @@ setup(
         'celery',
         'django-celery',
     ],
-    tests_require = ['mock']
+    tests_require = ['mock'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
