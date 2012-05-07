@@ -1,11 +1,14 @@
 import datetime
+import mock
 
 from django.test import TestCase
 from django.core import management
 from django.conf import settings
 from django.core import mail
 from django.contrib.auth.models import User
+from django.utils.unittest import TestCase as UnittestTestCase
 
+from app_metrics.exceptions import TimerError
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
 from app_metrics.utils import *
 from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year
@@ -211,3 +214,39 @@ class EmailTests(TestCase):
 
         self.assertEqual(len(mail.outbox), 1)
 
+
+class TimerTests(UnittestTestCase):
+    def setUp(self):
+        super(TimerTests, self).setUp()
+        self.timer = Timer()
+
+    def test_start(self):
+        with mock.patch('time.time') as mock_time:
+            mock_time.return_value = '12345.0'
+            self.timer.start()
+
+        self.assertEqual(self.timer._start, '12345.0')
+
+        self.assertRaises(TimerError, self.timer.start)
+
+    def test_stop(self):
+        self.assertRaises(TimerError, self.timer.stop)
+
+        with mock.patch('time.time') as mock_time:
+            mock_time.return_value = 12345.0
+            self.timer.start()
+
+        with mock.patch('time.time') as mock_time:
+            mock_time.return_value = 12347.2
+            self.timer.stop()
+
+        self.assertAlmostEqual(self.timer._elapsed, 2.2)
+        self.assertEqual(self.timer._start, None)
+
+    def test_elapsed(self):
+        self.assertRaises(TimerError, self.timer.elapsed)
+
+        self.timer._elapsed = 2.2
+        self.assertEqual(self.timer.elapsed(), 2.2)
+
+    # The ``Timer.store()`` is tested as part of the statsd backend tests.
