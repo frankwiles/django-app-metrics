@@ -28,6 +28,8 @@ settings and it will behave as if Celery was not configured.
 .. _Celery: http://celeryproject.org/
 .. _`django-celery`: http://ask.github.com/django-celery/
 
+Django 1.2 and above
+
 Usage
 =====
 

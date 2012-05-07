@@ -6,7 +6,6 @@ from django.core import management
 from django.conf import settings
 from django.core import mail
 from django.contrib.auth.models import User
-from django.utils.unittest import TestCase as UnittestTestCase
 
 from app_metrics.exceptions import TimerError
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
@@ -41,7 +40,6 @@ class MetricCreationTests(TestCase):
         new_metric = get_or_create_metric(name='Test Metric Class',
                                           slug='test_metric')
 
-#        from IPython import embed; embed()
         current_count = MetricItem.objects.filter(metric=new_metric)
         self.assertEqual(len(current_count), 3)
         self.assertEqual(current_count[0].num, 1)
@@ -215,7 +213,7 @@ class EmailTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
 
-class TimerTests(UnittestTestCase):
+class TimerTests(TestCase):
     def setUp(self):
         super(TimerTests, self).setUp()
         self.timer = Timer()
