@@ -76,3 +76,23 @@ def statsd_metric_task(slug, num=1, **kwargs):
 
     counter = statsd.Counter(slug, connection=conn)
     counter += num
+
+
+@task
+def statsd_timing_task(slug, seconds_taken=1.0, **kwargs):
+    if statsd is None:
+        raise ImproperlyConfigured("You must install 'python-statsd' in order to use this backend.")
+
+    conn = statsd.Connection(
+        host=getattr(settings, 'APP_METRICS_STATSD_HOST', 'localhost'),
+        port=int(getattr(settings, 'APP_METRICS_STATSD_PORT', 8125)),
+        sample_rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)),
+    )
+
+    # You might be wondering "Why not use ``timer.start/.stop`` here?"
+    # The problem is that this is a task, likely running out of process
+    # & perhaps with network overhead. We'll measure the timing elsewhere,
+    # in-process, to be as accurate as possible, then use the out-of-process
+    # task for talking to the statsd backend.
+    timer = statsd.Timer(slug, connection=conn)
+    timer.send('total', seconds_taken)
