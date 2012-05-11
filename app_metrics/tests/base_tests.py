@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 import mock
 
 from django.test import TestCase
@@ -8,7 +9,7 @@ from django.core import mail
 from django.contrib.auth.models import User
 
 from app_metrics.exceptions import TimerError
-from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
+from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear, Gauge
 from app_metrics.utils import *
 from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year
 
@@ -211,6 +212,28 @@ class EmailTests(TestCase):
         management.call_command('metrics_send_mail')
 
         self.assertEqual(len(mail.outbox), 1)
+
+
+class GaugeTests(TestCase):
+    def setUp(self):
+        self.gauge = Gauge.objects.create(
+            name='Testing',
+        )
+
+    def test_existing_gauge(self):
+        self.assertEqual(Gauge.objects.all().count(), 1)
+        self.assertEqual(Gauge.objects.get(slug='testing').current_value, Decimal('0.00'))
+
+        gauge('testing', '10.5')
+        # We should not have created a new gauge
+        self.assertEqual(Gauge.objects.all().count(), 1)
+        self.assertEqual(Gauge.objects.get(slug='testing').current_value, Decimal('10.5'))
+
+    def test_new_gauge(self):
+        gauge('test_trend1', Decimal('12.373'))
+        self.assertEqual(Gauge.objects.all().count(), 1)
+        self.assertEqual(list(Gauge.objects.all().values_list('slug', flat=True)), ['test_trend1'])
+        self.assertEqual(Gauge.objects.get(slug='test_trend1').current_value, Decimal('12.373'))
 
 
 class TimerTests(TestCase):

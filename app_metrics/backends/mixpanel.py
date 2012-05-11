@@ -25,3 +25,8 @@ def metric(slug, num=1, properties=None):
 def timing(slug, seconds_taken, **kwargs):
     # Unsupported, hence the noop.
     pass
+
+
+def gauge(slug, current_value, **kwargs):
+    # Unsupported, hence the noop.
+    pass

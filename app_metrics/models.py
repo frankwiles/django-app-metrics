@@ -1,8 +1,10 @@
 import datetime
 
+from django.contrib.auth.models import User
 from django.db import models, IntegrityError
 from django.template.defaultfilters import slugify
-from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
+
 
 class Metric(models.Model):
     """ The type of metric we want to store """
@@ -120,3 +122,26 @@ class MetricYear(models.Model):
                                            self.created.strftime("%Y"))
 
 
+class Gauge(models.Model):
+    """
+    A representation of the current state of some data.
+    """
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(unique=True, max_length=60)
+    current_value = models.DecimalField(max_digits=15, decimal_places=6, default='0.00')
+    created = models.DateTimeField(default=datetime.datetime.now)
+    updated = models.DateTimeField(default=datetime.datetime.now)
+
+    class Meta:
+        verbose_name = _('Gauge')
+        verbose_name_plural = _('Gauges')
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id and not self.slug:
+            self.slug = slugify(self.name)
+
+        self.updated = datetime.datetime.now()
+        return super(Gauge, self).save(*args, **kwargs)
