@@ -50,7 +50,7 @@ class MetricItem(models.Model):
     """ Individual metric items """
     metric = models.ForeignKey(Metric)
     num  = models.IntegerField(default=1)
-    created = models.DateField(default=datetime.datetime.now)
+    created = models.DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         verbose_name = 'Metric Item'
