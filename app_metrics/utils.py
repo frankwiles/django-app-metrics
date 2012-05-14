@@ -175,6 +175,12 @@ def timing(slug):
     timer.store(slug)
 
 
+def gauge(slug, current_value, **kwargs):
+    """Update a gauge."""
+    backend = import_backend()
+    backend.gauge(slug, current_value, **kwargs)
+
+
 def week_for_date(date):
     return date - datetime.timedelta(days=date.weekday())
 
