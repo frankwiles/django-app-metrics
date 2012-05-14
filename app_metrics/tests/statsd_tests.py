@@ -1,8 +1,9 @@
+from decimal import Decimal
 import mock
 import time
 from django.test import TestCase
 from django.conf import settings
-from app_metrics.utils import metric, timing
+from app_metrics.utils import metric, timing, gauge
 
 
 class StatsdCreationTests(TestCase):
@@ -34,6 +35,20 @@ class StatsdCreationTests(TestCase):
                 time.sleep(0.025)
 
             mock_client._send.assert_called_with(mock.ANY, {'testing.total': mock.ANY})
+
+    def test_gauge(self):
+        with mock.patch('statsd.Client') as mock_client:
+            instance = mock_client.return_value
+            instance._send.return_value = 1
+
+            gauge('testing', 10.5)
+            mock_client._send.assert_called_with(mock.ANY, {'testing': '10.5|g'})
+
+            gauge('testing', Decimal('6.576'))
+            mock_client._send.assert_called_with(mock.ANY, {'testing': '6.576|g'})
+
+            gauge('another', 1)
+            mock_client._send.assert_called_with(mock.ANY, {'another': '1|g'})
 
     def tearDown(self):
         settings.APP_METRICS_BACKEND = self.old_backend

@@ -11,7 +11,7 @@ except ImportError:
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
-from app_metrics.models import Metric, MetricItem
+from app_metrics.models import Metric, MetricItem, Gauge
 
 try:
     # Not required. If we do this once at the top of the module, we save
@@ -29,6 +29,18 @@ class MixPanelTrackError(Exception):
 def db_metric_task(slug, num=1, **kwargs):
     met = Metric.objects.get(slug=slug)
     MetricItem.objects.create(metric=met, num=num)
+
+
+@task
+def db_gauge_task(slug, current_value, **kwargs):
+    gauge, created = Gauge.objects.get_or_create(slug=slug, defaults={
+        'name': slug,
+        'current_value': current_value,
+    })
+
+    if not created:
+        gauge.current_value = current_value
+        gauge.save()
 
 
 def _get_token():
@@ -63,8 +75,7 @@ def mixpanel_metric_task(slug, num, properties=None, **kwargs):
             raise MixPanelTrackError(u'MixPanel returned 0')
 
 
-@task
-def statsd_metric_task(slug, num=1, **kwargs):
+def get_statsd_conn():
     if statsd is None:
         raise ImproperlyConfigured("You must install 'python-statsd' in order to use this backend.")
 
@@ -73,21 +84,19 @@ def statsd_metric_task(slug, num=1, **kwargs):
         port=int(getattr(settings, 'APP_METRICS_STATSD_PORT', 8125)),
         sample_rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)),
     )
+    return conn
 
+
+@task
+def statsd_metric_task(slug, num=1, **kwargs):
+    conn = get_statsd_conn()
     counter = statsd.Counter(slug, connection=conn)
     counter += num
 
 
 @task
 def statsd_timing_task(slug, seconds_taken=1.0, **kwargs):
-    if statsd is None:
-        raise ImproperlyConfigured("You must install 'python-statsd' in order to use this backend.")
-
-    conn = statsd.Connection(
-        host=getattr(settings, 'APP_METRICS_STATSD_HOST', 'localhost'),
-        port=int(getattr(settings, 'APP_METRICS_STATSD_PORT', 8125)),
-        sample_rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)),
-    )
+    conn = get_statsd_conn()
 
     # You might be wondering "Why not use ``timer.start/.stop`` here?"
     # The problem is that this is a task, likely running out of process
@@ -96,3 +105,11 @@ def statsd_timing_task(slug, seconds_taken=1.0, **kwargs):
     # task for talking to the statsd backend.
     timer = statsd.Timer(slug, connection=conn)
     timer.send('total', seconds_taken)
+
+
+@task
+def statsd_gauge_task(slug, current_value, **kwargs):
+    conn = get_statsd_conn()
+    gauge = statsd.Gauge(slug, connection=conn)
+    # We send nothing here, since we only have one name/slug to work with here.
+    gauge.send('', current_value)
