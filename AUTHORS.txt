@@ -8,3 +8,6 @@ Jacob Burch <jacobburch@revsys.com>
 Jannis Leidel <jezdez@enn.io>
 Flávio Juvena l<flaviojuvenal@gmail.com>
 Daniel Lindsley <daniel@toastdriven.com>
+
+Special thanks to RueLaLa.com for sponsoring the additions of the timers,
+gauges, and the statsd backend in general

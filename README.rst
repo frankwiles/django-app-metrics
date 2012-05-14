@@ -35,7 +35,7 @@ Usage
 
 ::
 
-  from app_metrics.utils import create_metric, metric
+  from app_metrics.utils import create_metric, metric, timing, Timer, gauge
 
   # Create a new metric to track
   my_metric = create_metric(name='New User Metric', slug='new_user_signup')
@@ -59,6 +59,24 @@ Usage
 
   # Send email reports to users
   manage.py metrics_send_mail
+
+  # Create a timer (only supported in statsd backend currently)
+  with timing('mytimer'):
+    for x in some_long_list:
+       call_time_consuming_function(x)
+
+  # Or if a context manager doesn't work for you you can use the Timer
+  # class
+  t = Timer()
+  t.start()
+  something_that_takes_forever()
+  t.stop()
+  t.store('mytimer')
+
+  # Gauges are current status type dials (think fuel gauge in a car)
+  # These simple store and retrieve a value
+  gauge('current_fuel', '30')
+  guage('load_load', '3.14')
 
 Backends
 ========
