@@ -231,7 +231,7 @@ class GaugeTests(TestCase):
 
     def test_new_gauge(self):
         gauge('test_trend1', Decimal('12.373'))
-        self.assertEqual(Gauge.objects.all().count(), 1)
+        self.assertEqual(Gauge.objects.all().count(), 2)
         self.assertEqual(list(Gauge.objects.all().values_list('slug', flat=True)), ['test_trend1'])
         self.assertEqual(Gauge.objects.get(slug='test_trend1').current_value, Decimal('12.373'))
 
