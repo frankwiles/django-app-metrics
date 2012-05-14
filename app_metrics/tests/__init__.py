@@ -9,3 +9,12 @@ except ImportError:
 
 if statsd is not None:
     from app_metrics.tests.statsd_tests import *
+
+try:
+    import redis
+except ImportError:
+    print "Skipping redis tests."
+    redis = None
+
+if redis is not None:
+    from app_metrics.tests.redis_tests import *

@@ -98,6 +98,10 @@ on their API.
 
 .. _`statsd`: https://github.com/etsy/statsd
 
+``app_metrics.backends.redis`` - This backend allows you to use the metric() and
+gauge() aspects, but not timer aspects of app_metrics.
+
+
 Settings
 ========
 
@@ -124,9 +128,18 @@ Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.statsd'.
 
 ``APP_METRICS_STATSD_SAMPLE_RATE`` - statds sample rate, defaults to 1
 
+Redis Settings
+--------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.redis'.
+
+``APP_METRICS_REDIS_HOST`` - Hostname of redis server, defaults to 'localhost'
+
+``APP_METRICS_REDIS_PORT`` - redis port, defaults to '6379'
+
+``APP_METRICS_REDIS_DB`` - redis database number to use, defaults to 0
+
 TODO
 ====
 
 - Improve text and HTML templates to display trending data well
-- Create redis backend for collection and aggregation
 

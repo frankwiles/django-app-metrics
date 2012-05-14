@@ -2,6 +2,7 @@ import base64
 import json
 import urllib
 import urllib2
+import datetime
 
 try:
     from celery.task import task
@@ -13,6 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from app_metrics.models import Metric, MetricItem, Gauge
 
+# For statsd support
 try:
     # Not required. If we do this once at the top of the module, we save
     # ourselves the pain of importing every time the task fires.
@@ -20,10 +22,16 @@ try:
 except ImportError:
     statsd = None
 
+# For redis support
+try:
+    import redis
+except:
+    redis = None
 
 class MixPanelTrackError(Exception):
     pass
 
+# DB Tasks
 
 @task
 def db_metric_task(slug, num=1, **kwargs):
@@ -51,6 +59,7 @@ def _get_token():
     else:
         return token
 
+# Mixpanel tasks
 
 @task
 def mixpanel_metric_task(slug, num, properties=None, **kwargs):
@@ -75,6 +84,8 @@ def mixpanel_metric_task(slug, num, properties=None, **kwargs):
             raise MixPanelTrackError(u'MixPanel returned 0')
 
 
+# Statsd tasks
+
 def get_statsd_conn():
     if statsd is None:
         raise ImproperlyConfigured("You must install 'python-statsd' in order to use this backend.")
@@ -92,7 +103,6 @@ def statsd_metric_task(slug, num=1, **kwargs):
     conn = get_statsd_conn()
     counter = statsd.Counter(slug, connection=conn)
     counter += num
-
 
 @task
 def statsd_timing_task(slug, seconds_taken=1.0, **kwargs):
@@ -113,3 +123,42 @@ def statsd_gauge_task(slug, current_value, **kwargs):
     gauge = statsd.Gauge(slug, connection=conn)
     # We send nothing here, since we only have one name/slug to work with here.
     gauge.send('', current_value)
+
+# Redis tasks
+
+def get_redis_conn():
+    if redis is None:
+        raise ImproperlyConfigured("You must install 'redis' in order to use this backend.")
+    conn = redis.StrictRedis(
+            host=getattr(settings, 'APP_METRICS_REDIS_HOST', 'localhost'),
+            port=getattr(settings, 'APP_METRICS_REDIS_PORT', 6379),
+            db=getattr(settings, 'APP_METRICS_REDIS_DB', 0),
+        )
+    return conn
+
+@task
+def redis_metric_task(slug, num=1, **kwargs):
+    # Record a metric in redis. We prefix our key here with 'm' for Metric
+    # and build keys for each day, week, month, and year
+    r = get_redis_conn()
+
+    # Build keys
+    now = datetime.datetime.now()
+    day_key = "m:%s:%s" % (slug, now.strftime("%Y-%m-%d"))
+    week_key = "m:%s:w:%s" % (slug, now.strftime("%U"))
+    month_key = "m:%s:m:%s" % (slug, now.strftime("%Y-%m"))
+    year_key = "m:%s:y:%s" % (slug, now.strftime("%Y"))
+
+    # Increment keys
+    r.incrby(day_key, num)
+    r.incrby(week_key, num)
+    r.incrby(month_key, num)
+    r.incrby(year_key, num)
+
+@task
+def redis_gauge_task(slug, current_value, **kwargs):
+    # We prefix our keys with a 'g' here for Gauge to avoid issues
+    # of having a gauge and metric of the same name
+    r = get_redis_conn()
+    r.set("g:%s" % slug, current_value)
+
