@@ -129,7 +129,7 @@ Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.statsd'.
 
 ``APP_METRICS_STATSD_PORT`` - statsd port, defaults to '8125'
 
-``APP_METRICS_STATSD_SAMPLE_RATE`` - statds sample rate, defaults to 1
+``APP_METRICS_STATSD_SAMPLE_RATE`` - statsd sample rate, defaults to 1
 
 Redis Settings
 --------------
