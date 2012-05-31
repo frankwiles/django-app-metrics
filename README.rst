@@ -110,6 +110,9 @@ Settings
 ``APP_METRICS_SEND_ZERO_ACTIVITY`` - Prevent e-mails being sent when there's been
 no activity today (i.e. during testing). Defaults to `True`.
 
+``APP_METRICS_DISABLED`` - If `True`, do not track metrics, useful for
+debugging. Defaults to `False`.
+
 Mixpanel Settings
 -----------------
 Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.mixpanel'.
