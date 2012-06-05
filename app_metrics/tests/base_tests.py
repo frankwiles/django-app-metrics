@@ -92,12 +92,29 @@ class MetricAggregationTests(TestCase):
         self.assertEqual(year1.num, 2)
         self.assertEqual(year2.num, 3)
 
+class DisabledTests(TestCase):
+    """ Test disabling collection """
+
+    def setUp(self):
+        super(DisabledTests, self).setUp()
+        self.old_disabled = getattr(settings, 'APP_METRICS_DISABLED', False)
+        settings.APP_METRICS_DISABLED = True
+        self.metric1 = create_metric(name='Test Disable', slug='test_disable')
+
+    def test_disabled(self):
+        self.assertEqual(MetricItem.objects.filter(metric__slug='test_disable').count(), 0)
+        settings.APP_METRICS_DISABLE = True
+        metric('test_disable')
+        self.assertEqual(MetricItem.objects.filter(metric__slug='test_disable').count(), 0)
+
+    def tearDown(self):
+        settings.APP_METRICS_DISABLED = self.old_disabled
+        super(DisabledTests, self).tearDown()
+
 class TrendingTests(TestCase):
     """ Test that our trending logic works """
 
     def setUp(self):
-        #self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
-        #self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
         self.metric1 = create_metric(name='Test Trending1', slug='test_trend1')
         self.metric2 = create_metric(name='Test Trending2', slug='test_trend2')
 
