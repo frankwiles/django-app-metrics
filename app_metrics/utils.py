@@ -7,8 +7,14 @@ from django.utils.importlib import import_module
 from app_metrics.exceptions import InvalidMetricsBackend, TimerError
 from app_metrics.models import Metric, MetricSet
 
+
+def collection_disabled():
+    return getattr(settings, 'APP_METRICS_DISABLED', False)
+
+
 def get_backend():
-     return getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
+    return getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
+
 
 def should_create_models(backend=None):
     if backend is None:
@@ -91,6 +97,9 @@ def import_backend():
 
 def metric(slug, num=1, **kwargs):
     """ Increment a metric """
+    if collection_disabled():
+        return
+
     backend = import_backend()
 
     try:
@@ -147,6 +156,8 @@ class Timer(object):
         return self._elapsed
 
     def store(self, slug):
+        if collection_disabled():
+            return
         backend = import_backend()
         backend.timing(slug, self.elapsed())
 
@@ -177,6 +188,8 @@ def timing(slug):
 
 def gauge(slug, current_value, **kwargs):
     """Update a gauge."""
+    if collection_disabled():
+        return
     backend = import_backend()
     backend.gauge(slug, current_value, **kwargs)
 
