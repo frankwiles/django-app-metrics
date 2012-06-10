@@ -48,7 +48,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('metric', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app_metrics.Metric'])),
             ('num', self.gf('django.db.models.fields.IntegerField')(default=1)),
-            ('created', self.gf('django.db.models.fields.DateField')(default=datetime.datetime.now)),
+            ('created', self.gf('django.db.models.fields.DateField')(default=datetime.date.today)),
         ))
         db.send_create_signal('app_metrics', ['MetricItem'])
 
