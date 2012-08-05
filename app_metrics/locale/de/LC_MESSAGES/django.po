@@ -1,0 +1,213 @@
+# This file is distributed under the same license as the django-app-metrics package.
+#
+# Translators:
+# Philipp Bosch <hello@pb.io>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: django-app-metrics\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-05 21:22+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Philipp Bosch <hello@pb.io>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: models.py:11 models.py:36 models.py:135
+msgid "name"
+msgstr "Name"
+
+#: models.py:12 models.py:136
+msgid "slug"
+msgstr "Slug"
+
+#: models.py:15 models.py:53 models.py:69 models.py:84 models.py:117
+msgid "metric"
+msgstr "Metrik"
+
+#: models.py:16 models.py:37
+msgid "metrics"
+msgstr "Metriken"
+
+#: models.py:38
+msgid "email recipients"
+msgstr "E-Mail-Empfänger"
+
+#: models.py:39
+msgid "no e-mail"
+msgstr "keine E-Mail"
+
+#: models.py:40
+msgid "send daily"
+msgstr "täglich versenden"
+
+#: models.py:41
+msgid "send weekly"
+msgstr "wöchentlich versenden"
+
+#: models.py:42
+msgid "send monthly"
+msgstr "monatlich versenden"
+
+#: models.py:45
+msgid "metric set"
+msgstr "Metrikgruppe"
+
+#: models.py:46
+msgid "metric sets"
+msgstr "Metrikgruppen"
+
+#: models.py:54 models.py:70 models.py:85 models.py:101 models.py:118
+msgid "number"
+msgstr "Anzahl"
+
+#: models.py:55 models.py:71 models.py:86 models.py:102 models.py:119
+#: models.py:138
+msgid "created"
+msgstr "erstellt"
+
+#: models.py:58
+msgid "metric item"
+msgstr "Metrikelement"
+
+#: models.py:59
+msgid "metric items"
+msgstr "Metrikelemente"
+
+#: models.py:62
+#, python-format
+msgid "'%(name)s' of %(num)d on %(created)s"
+msgstr "'%(name)s' von %(num)d am %(created)s"
+
+#: models.py:74
+msgid "day metric"
+msgstr "Tagesmetrik"
+
+#: models.py:75
+msgid "day metrics"
+msgstr "Tagesmetriken"
+
+#: models.py:78
+#, python-format
+msgid "'%(name)s' for '%(created)s'"
+msgstr "'%(name)s' am '%(created)s'"
+
+#: models.py:89
+msgid "week metric"
+msgstr "Wochenmetrik"
+
+#: models.py:90
+msgid "week metrics"
+msgstr "Wochenmetriken"
+
+#: models.py:93
+#, python-format
+msgid "'%(name)s' for week %(week)s of %(year)s"
+msgstr "'%(name)s' in KW %(week)s/%(year)s"
+
+#: models.py:105
+msgid "month metric"
+msgstr "Monatsmetrik"
+
+#: models.py:106
+msgid "month metrics"
+msgstr "Monatsmetriken"
+
+#: models.py:109
+#, python-format
+msgid "'%(name)s' for %(month)s %(year)s"
+msgstr "'%(name)s' im %(month)s %(year)s"
+
+#: models.py:122
+msgid "year metric"
+msgstr "Jahresmetrik"
+
+#: models.py:123
+msgid "year metrics"
+msgstr "Jahresmetriken"
+
+#: models.py:126
+#, python-format
+msgid "'%(name)s' for %(year)s"
+msgstr "'%(name)s' in '%(year)s'"
+
+#: models.py:137
+msgid "current value"
+msgstr "aktueller Wert"
+
+#: models.py:139
+msgid "updated"
+msgstr "geändert"
+
+#: models.py:142
+msgid "gauge"
+msgstr "Wertanzeiger"
+
+#: models.py:143
+msgid "gauges"
+msgstr "Wertanzeiger"
+
+#: management/commands/metrics_send_mail.py:54
+#, python-format
+msgid "%s Report"
+msgstr "%s Bericht"
+
+#: templates/app_metrics/email.html:3
+#, python-format
+msgid "%(name)s report for %(date)s"
+msgstr "%(name)s Bericht für %(date)s"
+
+#: templates/app_metrics/email.html:5
+msgid "today so far"
+msgstr "heute bislang"
+
+#: templates/app_metrics/email.html:15 templates/app_metrics/email.html:19
+msgid "yesterday"
+msgstr "gestern"
+
+#: templates/app_metrics/email.html:20
+msgid "prev week"
+msgstr "letzte Woche"
+
+#: templates/app_metrics/email.html:21
+msgid "prev month"
+msgstr "letzter Monat"
+
+#: templates/app_metrics/email.html:33 templates/app_metrics/email.html:37
+msgid "week to date"
+msgstr "diese Woche bislang"
+
+#: templates/app_metrics/email.html:38
+msgid "last week"
+msgstr "letzte Woche"
+
+#: templates/app_metrics/email.html:39
+msgid "this week last month"
+msgstr "diese Woche im letzten Monat"
+
+#: templates/app_metrics/email.html:40
+msgid "this week last year"
+msgstr "diese Woche letztes Jahr"
+
+#: templates/app_metrics/email.html:54 templates/app_metrics/email.html:58
+msgid "month to date"
+msgstr "dieser Monat bislang"
+
+#: templates/app_metrics/email.html:59
+msgid "last month"
+msgstr "letzter Monat"
+
+#: templates/app_metrics/email.html:60
+msgid "this month last year"
+msgstr "dieser Monat letztes Jahr"
+
+#: templates/app_metrics/email.html:72 templates/app_metrics/email.html:76
+msgid "year to date"
+msgstr "dieses Jahr bislang"
+
+#: templates/app_metrics/email.html:77
+msgid "last year"
+msgstr "letztes Jahr"
