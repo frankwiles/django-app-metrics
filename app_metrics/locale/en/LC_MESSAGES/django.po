@@ -1,0 +1,152 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-05 20:02+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:11 models.py:36 models.py:135
+msgid "name"
+msgstr ""
+
+#: models.py:12 models.py:136
+msgid "slug"
+msgstr ""
+
+#: models.py:15 models.py:53 models.py:69 models.py:84 models.py:117
+msgid "metric"
+msgstr ""
+
+#: models.py:16 models.py:37
+msgid "metrics"
+msgstr ""
+
+#: models.py:38
+msgid "email recipients"
+msgstr ""
+
+#: models.py:39
+msgid "no e-mail"
+msgstr ""
+
+#: models.py:40
+msgid "send daily"
+msgstr ""
+
+#: models.py:41
+msgid "send weekly"
+msgstr ""
+
+#: models.py:42
+msgid "send monthly"
+msgstr ""
+
+#: models.py:45
+msgid "metric set"
+msgstr ""
+
+#: models.py:46
+msgid "metric sets"
+msgstr ""
+
+#: models.py:54 models.py:70 models.py:85 models.py:101 models.py:118
+msgid "number"
+msgstr ""
+
+#: models.py:55 models.py:71 models.py:86 models.py:102 models.py:119
+#: models.py:138
+msgid "created"
+msgstr ""
+
+#: models.py:58
+msgid "metric item"
+msgstr ""
+
+#: models.py:59
+msgid "metric items"
+msgstr ""
+
+#: models.py:62
+#, python-format
+msgid "'%(name)s' of %(num)d on %(created)s"
+msgstr ""
+
+#: models.py:74
+msgid "day metric"
+msgstr ""
+
+#: models.py:75
+msgid "day metrics"
+msgstr ""
+
+#: models.py:78
+#, python-format
+msgid "'%(name)s' for '%(created)s'"
+msgstr ""
+
+#: models.py:89
+msgid "week metric"
+msgstr ""
+
+#: models.py:90
+msgid "week metrics"
+msgstr ""
+
+#: models.py:93
+#, python-format
+msgid "'%(name)s' for week %(week)s of %(year)s"
+msgstr ""
+
+#: models.py:105
+msgid "month metric"
+msgstr ""
+
+#: models.py:106
+msgid "month metrics"
+msgstr ""
+
+#: models.py:109
+#, python-format
+msgid "'%(name)s' for %(month)s %(year)s"
+msgstr ""
+
+#: models.py:122
+msgid "year metric"
+msgstr ""
+
+#: models.py:123
+msgid "year metrics"
+msgstr ""
+
+#: models.py:126
+#, python-format
+msgid "'%(name)s' for month of '%(year)s'"
+msgstr ""
+
+#: models.py:137
+msgid "current value"
+msgstr ""
+
+#: models.py:139
+msgid "updated"
+msgstr ""
+
+#: models.py:142
+msgid "gauge"
+msgstr ""
+
+#: models.py:143
+msgid "gauges"
+msgstr ""

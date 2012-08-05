@@ -1,8 +1,11 @@
 import datetime 
+import string
 
 from django.core.management.base import NoArgsCommand 
 from django.conf import settings 
 from django.db.models import Q
+from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 
 from app_metrics.reports import generate_report
 from app_metrics.models import MetricSet, Metric 
@@ -10,11 +13,14 @@ from app_metrics.utils import get_backend
 
 class Command(NoArgsCommand): 
     help = "Send Report E-mails" 
-
     requires_model_validation = True 
+    can_import_settings = True 
 
     def handle_noargs(self, **options): 
         """ Send Report E-mails """ 
+
+        from django.conf import settings
+        translation.activate(settings.LANGUAGE_CODE)
 
         backend = get_backend() 
 
@@ -45,7 +51,7 @@ class Command(NoArgsCommand):
             USE_MAILER = False 
 
         for s in qs: 
-            subject = "%s Report" % s.name 
+            subject = _("%s Report") % s.name 
 
             recipient_list = s.email_recipients.values_list('email', flat=True)
             
@@ -67,4 +73,6 @@ class Command(NoArgsCommand):
                                              to=recipient_list)
                 msg.attach_alternative(message_html, "text/html")
                 msg.send()
+
+        translation.deactivate()
 
