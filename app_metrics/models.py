@@ -8,12 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 
 class Metric(models.Model):
     """ The type of metric we want to store """
-    name    = models.CharField(max_length=50)
-    slug    = models.SlugField(unique=True, max_length=60, db_index=True)
+    name    = models.CharField(_('name'), max_length=50)
+    slug    = models.SlugField(_('slug'), unique=True, max_length=60, db_index=True)
 
     class Meta:
-        verbose_name = 'Metric'
-        verbose_name_plural = 'Metrics'
+        verbose_name = _('metric')
+        verbose_name_plural = _('metrics')
 
     def __unicode__(self):
         return self.name
@@ -33,108 +33,114 @@ class Metric(models.Model):
 
 class MetricSet(models.Model):
     """ A set of metrics that should be sent via email to certain users """
-    name          = models.CharField(max_length=50)
-    metrics       = models.ManyToManyField(Metric)
-    email_recipients = models.ManyToManyField(User)
-    no_email      = models.BooleanField(default=False)
-    send_daily    = models.BooleanField(default=True)
-    send_weekly   = models.BooleanField(default=False)
-    send_monthly  = models.BooleanField(default=False)
+    name          = models.CharField(_('name'), max_length=50)
+    metrics       = models.ManyToManyField(Metric, verbose_name=_('metrics'))
+    email_recipients = models.ManyToManyField(User, verbose_name=_('email recipients'))
+    no_email      = models.BooleanField(_('no e-mail'), default=False)
+    send_daily    = models.BooleanField(_('send daily'), default=True)
+    send_weekly   = models.BooleanField(_('send weekly'), default=False)
+    send_monthly  = models.BooleanField(_('send monthly'), default=False)
 
     class Meta:
-        verbose_name = 'Metric Set'
-        verbose_name_plural = 'Metric Sets'
+        verbose_name = _('metric set')
+        verbose_name_plural = _('metric sets')
 
     def __unicode__(self):
         return self.name
 
 class MetricItem(models.Model):
     """ Individual metric items """
-    metric = models.ForeignKey(Metric)
-    num  = models.IntegerField(default=1)
-    created = models.DateTimeField(default=datetime.datetime.now)
+    metric = models.ForeignKey(Metric, verbose_name=_('metric'))
+    num  = models.IntegerField(_('number'), default=1)
+    created = models.DateTimeField(_('created'), default=datetime.datetime.now)
 
     class Meta:
-        verbose_name = 'Metric Item'
-        verbose_name_plural = 'Metric Items'
+        verbose_name = _('metric item')
+        verbose_name_plural = _('metric items')
 
     def __unicode__(self):
-        return "'%s' of %d on %s" % ( self.metric.name,
-                                      self.num,
-                                      self.created )
+        return _("'%(name)s' of %(num)d on %(created)s") % {
+                                      'name': self.metric.name,
+                                      'num': self.num,
+                                      'created': self.created }
 
 class MetricDay(models.Model):
     """ Aggregation of Metrics on a per day basis """
-    metric  = models.ForeignKey(Metric)
-    num   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.date.today)
+    metric  = models.ForeignKey(Metric, verbose_name=_('metric'))
+    num   = models.BigIntegerField(_('number'), default=0)
+    created = models.DateField(_('created'), default=datetime.date.today)
 
     class Meta:
-        verbose_name = 'Day Metric'
-        verbose_name_plural = 'By Day Metrics'
+        verbose_name = _('day metric')
+        verbose_name_plural = _('day metrics')
 
     def __unicode__(self):
-        return "'%s' for '%s'" % (self.metric.name, self.created)
+        return _("'%(name)s' for '%(created)s'") % {
+                                      'name': self.metric.name, 
+                                      'created': self.created }
 
 class MetricWeek(models.Model):
     """ Aggregation of Metrics on a weekly basis """
-    metric  = models.ForeignKey(Metric)
-    num   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.date.today)
+    metric  = models.ForeignKey(Metric, verbose_name=_('metric'))
+    num   = models.BigIntegerField(_('number'), default=0)
+    created = models.DateField(_('created'), default=datetime.date.today)
 
     class Meta:
-        verbose_name = 'Week Metric'
-        verbose_name_plural = 'By Week Metrics'
+        verbose_name = _('week metric')
+        verbose_name_plural = _('week metrics')
 
     def __unicode__(self):
-        return "'%s' for week %s of %s" % (self.metric.name,
-                                           self.created.strftime("%U"),
-                                           self.created.strftime("%Y"))
+        return _("'%(name)s' for week %(week)s of %(year)s") % {
+                                      'name': self.metric.name,
+                                      'week': self.created.strftime("%U"),
+                                      'year': self.created.strftime("%Y") }
 
 class MetricMonth(models.Model):
     """ Aggregation of Metrics on monthly basis """
-    metric  = models.ForeignKey(Metric)
-    num   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.date.today)
+    metric  = models.ForeignKey(Metric, verbose_name=('metric'))
+    num   = models.BigIntegerField(_('number'), default=0)
+    created = models.DateField(_('created'), default=datetime.date.today)
 
     class Meta:
-        verbose_name = 'Month Metric'
-        verbose_name_plural = 'By Month Metrics'
+        verbose_name = _('month metric')
+        verbose_name_plural = _('month metrics')
 
     def __unicode__(self):
-        return "'%s' for %s %s" % (self.metric.name,
-                                   self.created.strftime("%B"),
-                                   self.created.strftime("%Y"))
+        return _("'%(name)s' for %(month)s %(year)s") % {
+                                      'name': self.metric.name,
+                                      'month': self.created.strftime("%B"),
+                                      'year': self.created.strftime("%Y") }
 
 
 class MetricYear(models.Model):
     """ Aggregation of Metrics on a yearly basis """
-    metric  = models.ForeignKey(Metric)
-    num   = models.BigIntegerField(default=0)
-    created = models.DateField(default=datetime.date.today)
+    metric  = models.ForeignKey(Metric, verbose_name=_('metric'))
+    num   = models.BigIntegerField(_('number'), default=0)
+    created = models.DateField(_('created'), default=datetime.date.today)
 
     class Meta:
-        verbose_name = 'Year Metric'
-        verbose_name_plural = 'By Year Metrics'
+        verbose_name = _('year metric')
+        verbose_name_plural = _('year metrics')
 
     def __unicode__(self):
-        return "'%s' for month of '%s'" % (self.metric.name,
-                                           self.created.strftime("%Y"))
+        return _("'%(name)s' for %(year)s") % {
+                                      'name': self.metric.name,
+                                      'year': self.created.strftime("%Y") }
 
 
 class Gauge(models.Model):
     """
     A representation of the current state of some data.
     """
-    name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True, max_length=60)
-    current_value = models.DecimalField(max_digits=15, decimal_places=6, default='0.00')
-    created = models.DateTimeField(default=datetime.datetime.now)
-    updated = models.DateTimeField(default=datetime.datetime.now)
+    name = models.CharField(_('name'), max_length=50)
+    slug = models.SlugField(_('slug'), unique=True, max_length=60)
+    current_value = models.DecimalField(_('current value'), max_digits=15, decimal_places=6, default='0.00')
+    created = models.DateTimeField(_('created'), default=datetime.datetime.now)
+    updated = models.DateTimeField(_('updated'), default=datetime.datetime.now)
 
     class Meta:
-        verbose_name = _('Gauge')
-        verbose_name_plural = _('Gauges')
+        verbose_name = _('gauge')
+        verbose_name_plural = _('gauges')
 
     def __unicode__(self):
         return self.name
