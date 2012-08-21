@@ -110,6 +110,16 @@ keyword arg to ``metric()``.
 .. _`Librato documentation`: http://dev.librato.com/v1/metrics#metrics
 .. _`Librato library`: http://pypi.python.org/pypi/librato/0.2
 
+``app_metrics.backends.composite`` - This backend lets you compose multiple
+backends to which metric-calls are handed. The backends to which the call is
+sent can be configured with the ``APP_METRICS_DEFAULT_BACKENDS`` setting. This
+can be overridden in each call by supplying a ``backends`` keyword argument::
+
+    metric('signups', 42, backends=['librato', 'db'])
+
+The backend identifiers that can be used are the built-in ones (``librato``,
+``db``, ``mixpanel``, ``redis``, ``statsd``). Additional backends can be
+configured with the ``APP_METRICS_BACKENDS`` setting (see below for details).
 
 Settings
 ========
@@ -159,6 +169,20 @@ Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.librato'.
 ``APP_METRICS_LIBRATO_TOKEN`` - Librato API token
 
 ``APP_METRICS_LIBRATO_SOURCE`` - Librato data source (e.g. 'staging', 'dev'...)
+
+Composite Backend Settings
+--------------------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.composite'.
+
+``APP_METRICS_DEFAULT_BACKENDS`` - List of backends that are used by default
+
+``APP_METRICS_BACKENDS`` - Tuple of tuples with additional backends to be used,
+e.g.::
+
+    APP_METRICS_BACKENDS = (
+        ('my_backend', 'my_metrics_lib.backends.my_backend'),
+        ('mongo_backend', 'mongo_metrics.backends.mongo_backend'),
+    )
 
 
 TODO
