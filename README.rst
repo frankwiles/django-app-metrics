@@ -101,6 +101,15 @@ on their API.
 ``app_metrics.backends.redis`` - This backend allows you to use the metric() and
 gauge() aspects, but not timer aspects of app_metrics.
 
+``app_metrics.backends.librato_backend`` - This backend lets you send metrics to
+Librato. See the `Librato documentation`_ for more information on their API.
+This requires the `Librato library`_. It uses use a librato Gauge by default,
+although this can be overridden by supplying ``metric_type="counter"`` as a
+keyword arg to ``metric()``.
+
+.. _`Librato documentation`: http://dev.librato.com/v1/metrics#metrics
+.. _`Librato library`: http://pypi.python.org/pypi/librato/0.2
+
 
 Settings
 ========
@@ -140,6 +149,17 @@ Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.redis'.
 ``APP_METRICS_REDIS_PORT`` - redis port, defaults to '6379'
 
 ``APP_METRICS_REDIS_DB`` - redis database number to use, defaults to 0
+
+Librato Settings
+----------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.librato'.
+
+``APP_METRICS_LIBRATO_USER`` - Librato username
+
+``APP_METRICS_LIBRATO_TOKEN`` - Librato API token
+
+``APP_METRICS_LIBRATO_SOURCE`` - Librato data source (e.g. 'staging', 'dev'...)
+
 
 TODO
 ====

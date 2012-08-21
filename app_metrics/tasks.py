@@ -28,6 +28,15 @@ try:
 except:
     redis = None
 
+# For librato support
+try:
+    import librato
+except ImportError:
+    pass
+else:
+    from app_metrics.backends.librato_tasks import librato_metric_task
+
+
 class MixPanelTrackError(Exception):
     pass
 
