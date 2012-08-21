@@ -174,7 +174,10 @@ Composite Backend Settings
 --------------------------
 Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.composite'.
 
-``APP_METRICS_DEFAULT_BACKENDS`` - List of backends that are used by default
+``APP_METRICS_DEFAULT_BACKENDS`` - List of backends that are used by default,
+e.g.::
+
+    APP_METRICS_DEFAULT_BACKENDS = ('librato', 'db', 'my_custom_backend',)
 
 ``APP_METRICS_BACKENDS`` - Tuple of tuples with additional backends to be used,
 e.g.::
