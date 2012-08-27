@@ -1,0 +1,7 @@
+flake8
+coverage
+django-coverage==1.2.2
+mock
+django-celery
+# python-statsd==1.5.4
+redis==2.6.2
