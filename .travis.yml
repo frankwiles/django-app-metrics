@@ -1,0 +1,16 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+before_install:
+  - export PIP_USE_MIRRORS=true
+  - sudo apt-get update
+  - sudo apt-get install redis-server
+install:
+  - pip install -e .
+  - pip install -r requirements/tests.txt Django==$DJANGO
+script:
+  - django-admin.py test --settings=app_metrics.tests.settings app_metrics
+env:
+  - DJANGO=1.3.3
+  - DJANGO=1.4.1
