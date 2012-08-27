@@ -11,7 +11,6 @@ install:
   - pip install -e .
   - pip install -r requirements/tests.txt Django==$DJANGO
 script:
-  - flake8 app_metrics --ignore=E501,E128
   - django-admin.py test --settings=app_metrics.tests.settings app_metrics
 env:
   - DJANGO=1.3.3
