@@ -1,6 +1,10 @@
 Overview
 ========
 
+.. image:: https://secure.travis-ci.org/frankwiles/django-app-metrics.png
+    :alt: Build Status
+    :target: http://travis-ci.org/frankwiles/django-app-metrics
+
 django-app-metrics allows you to capture and report on various events in your
 applications.  You simply define various named metrics and record when they
 happen.  These might be certain events that may be immediatey useful, for
