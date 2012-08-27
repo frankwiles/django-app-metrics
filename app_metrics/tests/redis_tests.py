@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import mock
 from django.test import TestCase
 from django.conf import settings

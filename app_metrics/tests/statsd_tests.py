@@ -1,4 +1,3 @@
-from __future__ import with_statement
 from decimal import Decimal
 import mock
 import time
