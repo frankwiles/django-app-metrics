@@ -1,37 +1,37 @@
 {% load i18n %}<html>
 <body>
-<h1>{% blocktrans with name=metric_set.name date=today|date:"D d M Y" %}{{ name }} report for {{ date }}{% endblocktrans %}</h1> 
+<h1>{% blocktrans with metric_set.name as name and today|date:"D d M Y" as date %}{{ name }} report for {{ date }}{% endblocktrans %}</h1>
 
-<h2>{% trans "today so far"|capfirst %}</h2> 
-<table> 
-    {% for m in metrics %} 
-    <tr> 
+<h2>{% trans "today so far"|capfirst %}</h2>
+<table>
+    {% for m in metrics %}
+    <tr>
         <td>{{ m.metric.name }}</td>
-        <td>{{ m.trends.current_day }}</td> 
-    </tr> 
-{% endfor %} 
-</table> 
+        <td>{{ m.trends.current_day }}</td>
+    </tr>
+{% endfor %}
+</table>
 
-<h2>{% trans "yesterday"|capfirst %}</h2> 
-<table> 
+<h2>{% trans "yesterday"|capfirst %}</h2>
+<table>
     <tr>
         <th></th>
         <th>{% trans "yesterday"|capfirst %}</th>
         <th>{% trans "prev week"|capfirst %}</th>
         <th>{% trans "prev month"|capfirst %}</th>
     </tr>
-    {% for m in metrics %} 
-    <tr> 
+    {% for m in metrics %}
+    <tr>
         <td>{{ m.metric.name }}</td>
         <td>{{ m.trends.yesterday.yesterday }}</td>
         <td>{{ m.trends.yesterday.previous_week }}</td>
         <td>{{ m.trends.yesterday.previous_month }}</td>
-    </tr> 
-{% endfor %} 
-</table> 
+    </tr>
+{% endfor %}
+</table>
 
-<h3>{% trans "week to date"|capfirst %}</h3> 
-<table> 
+<h3>{% trans "week to date"|capfirst %}</h3>
+<table>
     <tr>
         <th></th>
         <th>{% trans "week to date"|capfirst %}</th>
@@ -39,50 +39,50 @@
         <th>{% trans "this week last month"|capfirst %}</th>
         <th>{% trans "this week last year"|capfirst %}</th>
     </tr>
-    {% for m in metrics %} 
-    <tr> 
+    {% for m in metrics %}
+    <tr>
         <td>{{ m.metric.name }}</td>
-        <td>{{ m.trends.current_day }}</td> 
+        <td>{{ m.trends.current_day }}</td>
         <td>{{ m.trends.week.week }}</td>
         <td>{{ m.trends.week.previous_week }}</td>
         <td>{{ m.trends.week.previous_month_week }}</td>
         <td>{{ m.trends.week.previous_year_week }}</td>
-    </tr> 
-{% endfor %} 
-</table> 
+    </tr>
+{% endfor %}
+</table>
 
-<h3>{% trans "month to date"|capfirst %}</h3> 
-<table> 
+<h3>{% trans "month to date"|capfirst %}</h3>
+<table>
     <tr>
         <th></th>
         <th>{% trans "month to date"|capfirst %}</th>
         <th>{% trans "last month"|capfirst %}</th>
         <th>{% trans "this month last year"|capfirst %}</th>
     </tr>
-    {% for m in metrics %} 
-    <tr> 
+    {% for m in metrics %}
+    <tr>
         <td>{{ m.metric.name }}</td>
         <td>{{ m.trends.month.month }}</td>
         <td>{{ m.trends.month.previous_month }}</td>
         <td>{{ m.trends.month.previous_year_month }}</td>
-    </tr> 
-{% endfor %} 
-</table> 
+    </tr>
+{% endfor %}
+</table>
 
-<h3>{% trans "year to date"|capfirst %}</h3> 
-<table> 
+<h3>{% trans "year to date"|capfirst %}</h3>
+<table>
     <tr>
         <th></th>
         <th>{% trans "year to date"|capfirst %}</th>
         <th>{% trans "last year"|capfirst %}</th>
     </tr>
-    {% for m in metrics %} 
-    <tr> 
+    {% for m in metrics %}
+    <tr>
         <td>{{ m.metric.name }}</td>
-        <td>{{ m.trends.year.year }}</td> 
-        <td>{{ m.trends.year.previous_year }}</td> 
-    </tr> 
-{% endfor %} 
-</table> 
+        <td>{{ m.trends.year.year }}</td>
+        <td>{{ m.trends.year.previous_year }}</td>
+    </tr>
+{% endfor %}
+</table>
 </body>
 </html>
