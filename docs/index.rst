@@ -6,7 +6,7 @@
 ==================
 Django App Metrics
 ==================
-Django App Metrics allows you to capture and report on various events in your 
+Django App Metrics allows you to capture and report on various events in your
 applications.
 
 Contents:

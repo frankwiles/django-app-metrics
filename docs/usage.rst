@@ -31,6 +31,23 @@ Example::
     # Increment the metric by some other number
     metric('new_user_signup', 4)
 
+    # Create a timer (only supported in statsd backend currently)
+    with timing('mytimer'):
+      for x in some_long_list:
+         call_time_consuming_function(x)
+
+    # Or if a context manager doesn't work for you you can use a Timer class
+    t = Timer()
+    t.start()
+    something_that_takes_forever()
+    t.stop()
+    t.store('mytimer')
+
+    # Gauges are current status type dials (think fuel gauge in a car)
+    # These simply store and retrieve a value
+    gauge('current_fuel', '30')
+    guage('load_load', '3.14')
+
 Management Commands
 ===================
 
@@ -52,4 +69,4 @@ Send email reports to users. The email will be sent out using django_mailer_'s `
 
 
 .. _django_mailer: https://github.com/jtauber/django-mailer/
-.. _django.core.mail: https://docs.djangoproject.com/en/1.3/topics/email/
+.. _django.core.mail: https://docs.djangoproject.com/en/dev/topics/email/

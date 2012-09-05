@@ -70,8 +70,7 @@ Usage
     for x in some_long_list:
        call_time_consuming_function(x)
 
-  # Or if a context manager doesn't work for you you can use the Timer
-  # class
+  # Or if a context manager doesn't work for you you can use a Timer class
   t = Timer()
   t.start()
   something_that_takes_forever()
@@ -79,7 +78,7 @@ Usage
   t.store('mytimer')
 
   # Gauges are current status type dials (think fuel gauge in a car)
-  # These simple store and retrieve a value
+  # These simply store and retrieve a value
   gauge('current_fuel', '30')
   guage('load_load', '3.14')
 
