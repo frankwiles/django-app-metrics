@@ -105,6 +105,23 @@ on their API.
 ``app_metrics.backends.redis`` - This backend allows you to use the metric() and
 gauge() aspects, but not timer aspects of app_metrics.
 
+``app_metrics.backends.librato_backend`` - This backend lets you send metrics to
+Librato. See the `Librato documentation`_ for more information on their API.
+This requires the `Librato library`_. It uses use a librato Gauge by default,
+although this can be overridden by supplying ``metric_type="counter"`` as a
+keyword arg to ``metric()``.
+
+.. _`Librato documentation`: http://dev.librato.com/v1/metrics#metrics
+.. _`Librato library`: http://pypi.python.org/pypi/librato/0.2
+
+``app_metrics.backends.composite`` - This backend lets you compose multiple
+backends to which metric-calls are handed. The backends to which the call is
+sent can be configured with the ``APP_METRICS_COMPOSITE_BACKENDS`` setting. This
+can be overridden in each call by supplying a ``backends`` keyword argument::
+
+    metric('signups', 42, backends=['app_metrics.backends.librato',
+                                    'app_metrics.backends.db'])
+
 
 Settings
 ========
@@ -144,6 +161,25 @@ Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.redis'.
 ``APP_METRICS_REDIS_PORT`` - redis port, defaults to '6379'
 
 ``APP_METRICS_REDIS_DB`` - redis database number to use, defaults to 0
+
+Librato Settings
+----------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.librato'.
+
+``APP_METRICS_LIBRATO_USER`` - Librato username
+
+``APP_METRICS_LIBRATO_TOKEN`` - Librato API token
+
+``APP_METRICS_LIBRATO_SOURCE`` - Librato data source (e.g. 'staging', 'dev'...)
+
+Composite Backend Settings
+--------------------------
+Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.composite'.
+
+``APP_METRICS_COMPOSITE_BACKENDS`` - List of backends that are used by default,
+e.g.::
+
+    APP_METRICS_COMPOSITE_BACKENDS = ('librato', 'db', 'my_custom_backend',)
 
 Running the tests
 =================
