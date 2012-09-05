@@ -1,5 +1,6 @@
-Overview
-========
+
+Django App Metrics
+==================
 
 .. image:: https://secure.travis-ci.org/frankwiles/django-app-metrics.png
     :alt: Build Status
@@ -153,7 +154,7 @@ To run the tests simply run::
 django-admin.py test --settings=app_metrics.tests.settings
 
 TODO
-====
+----
 
 - Improve text and HTML templates to display trending data well
 
