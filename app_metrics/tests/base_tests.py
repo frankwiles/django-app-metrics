@@ -127,7 +127,7 @@ class TrendingTests(TestCase):
         metric('test_trend1')
 
         count = _trending_for_current_day(self.metric1)
-        self.assertEqual(count,4)
+        self.assertEqual(count, 4)
 
     def test_trending_for_yesterday(self):
         """ Test yesterday trending """
@@ -158,10 +158,10 @@ class TrendingTests(TestCase):
         MetricWeek.objects.create(metric=self.metric1, num=2, created=previous_year_date)
 
         data = _trending_for_week(self.metric1)
-        self.assertEqual(data['week'],5)
-        self.assertEqual(data['previous_week'],4)
-        self.assertEqual(data['previous_month_week'],3)
-        self.assertEqual(data['previous_year_week'],2)
+        self.assertEqual(data['week'], 5)
+        self.assertEqual(data['previous_week'], 4)
+        self.assertEqual(data['previous_month_week'], 3)
+        self.assertEqual(data['previous_year_week'], 2)
 
     def test_trending_for_month(self):
         """ Test monthly trending data """
@@ -174,9 +174,9 @@ class TrendingTests(TestCase):
         MetricMonth.objects.create(metric=self.metric1, num=3, created=previous_month_year_date)
 
         data = _trending_for_month(self.metric1)
-        self.assertEqual(data['month'],5)
-        self.assertEqual(data['previous_month'],4)
-        self.assertEqual(data['previous_month_year'],3)
+        self.assertEqual(data['month'], 5)
+        self.assertEqual(data['previous_month'], 4)
+        self.assertEqual(data['previous_month_year'], 3)
 
     def test_trending_for_year(self):
         """ Test yearly trending data """
@@ -187,8 +187,8 @@ class TrendingTests(TestCase):
         MetricYear.objects.create(metric=self.metric1, num=4, created=previous_year_date)
 
         data = _trending_for_year(self.metric1)
-        self.assertEqual(data['year'],5)
-        self.assertEqual(data['previous_year'],4)
+        self.assertEqual(data['year'], 5)
+        self.assertEqual(data['previous_year'], 4)
 
     def test_missing_trending(self):
         this_week_date = week_for_date(datetime.date.today())
@@ -201,10 +201,10 @@ class TrendingTests(TestCase):
         MetricWeek.objects.create(metric=self.metric1, num=3, created=previous_month_date)
 
         data = _trending_for_week(self.metric1)
-        self.assertEqual(data['week'],5)
-        self.assertEqual(data['previous_week'],4)
-        self.assertEqual(data['previous_month_week'],3)
-        self.assertEqual(data['previous_year_week'],0)
+        self.assertEqual(data['week'], 5)
+        self.assertEqual(data['previous_week'], 4)
+        self.assertEqual(data['previous_month_week'], 3)
+        self.assertEqual(data['previous_year_week'], 0)
 
 class EmailTests(TestCase):
     """ Test that our emails send properly """
