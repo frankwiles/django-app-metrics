@@ -145,6 +145,13 @@ Set ``APP_METRICS_BACKEND`` == 'app_metrics.backends.redis'.
 
 ``APP_METRICS_REDIS_DB`` - redis database number to use, defaults to 0
 
+Running the tests
+=================
+
+To run the tests simply run::
+
+django-admin.py test --settings=app_metrics.tests.settings
+
 TODO
 ====
 
