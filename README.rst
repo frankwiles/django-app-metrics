@@ -23,6 +23,13 @@ You then group these individual metrics into a MetricSet, where you define
 how often you want an email report being sent, and to which User(s) it should
 be sent.
 
+Documentation
+=============
+
+Documentation can be found at ReadTheDocs_.
+
+.. _ReadTheDocs: http://django-app-metrics.readthedocs.org/
+
 Requirements
 ============
 
