@@ -113,9 +113,10 @@ class DisabledTests(TestCase):
 
     def test_disabled(self):
         self.assertEqual(MetricItem.objects.filter(metric__slug='test_disable').count(), 0)
-        settings.APP_METRICS_DISABLE = True
+        settings.APP_METRICS_DISABLED = True
         metric('test_disable')
         self.assertEqual(MetricItem.objects.filter(metric__slug='test_disable').count(), 0)
+        self.assertTrue(collection_disabled())
 
     def tearDown(self):
         settings.APP_METRICS_DISABLED = self.old_disabled
@@ -255,6 +256,10 @@ class GaugeTests(TestCase):
         # We should not have created a new gauge
         self.assertEqual(Gauge.objects.all().count(), 1)
         self.assertEqual(Gauge.objects.get(slug='testing').current_value, Decimal('10.5'))
+
+        # Test updating
+        gauge('testing', '11.1')
+        self.assertEqual(Gauge.objects.get(slug='testing').current_value, Decimal('11.1'))
 
     def test_new_gauge(self):
         gauge('test_trend1', Decimal('12.373'))

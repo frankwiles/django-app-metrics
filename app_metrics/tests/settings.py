@@ -1,9 +1,6 @@
 import os
 
 import django
-import djcelery
-
-djcelery.setup_loader()
 
 BASE_PATH = os.path.dirname(__file__)
 
@@ -22,13 +19,15 @@ SITE_ID = 1
 
 DEBUG = True
 
-#TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
+TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 
 COVERAGE_MODULE_EXCLUDES = [
     'tests$', 'settings$', 'urls$',
     'common.views.test', '__init__', 'django',
-    'migrations', 'djcelery']
-#COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(BASE_PATH, 'coverage')
+    'migrations', 'djcelery'
+]
+
+COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(BASE_PATH, 'coverage')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
