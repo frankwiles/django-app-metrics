@@ -1,6 +1,6 @@
-coverage
+coverage==3.5.2
 django-coverage==1.2.2
-mock
+mock==0.8.0
 django-celery==3.0.6
 # python-statsd==1.5.4
 redis==2.6.2
