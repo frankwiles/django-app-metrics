@@ -193,11 +193,11 @@ Running the tests
 
 To run the tests you'll need some requirements installed, so run::
 
-pip install -r requirements/test.txt
+    pip install -r requirements/test.txt
 
 Then simply run::
 
-django-admin.py test --settings=app_metrics.tests.settings
+    django-admin.py test --settings=app_metrics.tests.settings
 
 TODO
 ----
