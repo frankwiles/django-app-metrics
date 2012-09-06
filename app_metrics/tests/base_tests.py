@@ -248,9 +248,9 @@ class GaugeTests(TestCase):
         )
 
     def test_existing_gauge(self):
+        from IPython import embed; embed()
         self.assertEqual(Gauge.objects.all().count(), 1)
         self.assertEqual(Gauge.objects.get(slug='testing').current_value, Decimal('0.00'))
-
         gauge('testing', '10.5')
         # We should not have created a new gauge
         self.assertEqual(Gauge.objects.all().count(), 1)

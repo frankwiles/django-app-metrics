@@ -169,6 +169,8 @@ def redis_gauge_task(slug, current_value, **kwargs):
     r = get_redis_conn()
     r.set("g:%s" % slug, current_value)
 
+# Librato tasks
+
 @task
 def librato_metric_task(name, num, attributes=None, metric_type="gauge",
                         **kwargs):
