@@ -31,11 +31,9 @@ except:
 # For librato support
 try:
     import librato
+    from librato.metrics import Gauge, Counter
 except ImportError:
-    pass
-else:
-    from app_metrics.backends.librato_tasks import librato_metric_task
-
+    librato = None
 
 class MixPanelTrackError(Exception):
     pass
@@ -74,7 +72,7 @@ def _get_token():
 def mixpanel_metric_task(slug, num, properties=None, **kwargs):
 
     token = _get_token()
-    if properties == None:
+    if properties is None:
         properties = dict()
 
     if "token" not in properties:
@@ -139,10 +137,10 @@ def get_redis_conn():
     if redis is None:
         raise ImproperlyConfigured("You must install 'redis' in order to use this backend.")
     conn = redis.StrictRedis(
-            host=getattr(settings, 'APP_METRICS_REDIS_HOST', 'localhost'),
-            port=getattr(settings, 'APP_METRICS_REDIS_PORT', 6379),
-            db=getattr(settings, 'APP_METRICS_REDIS_DB', 0),
-        )
+        host=getattr(settings, 'APP_METRICS_REDIS_HOST', 'localhost'),
+        port=getattr(settings, 'APP_METRICS_REDIS_PORT', 6379),
+        db=getattr(settings, 'APP_METRICS_REDIS_DB', 0),
+    )
     return conn
 
 @task
@@ -171,3 +169,15 @@ def redis_gauge_task(slug, current_value, **kwargs):
     r = get_redis_conn()
     r.set("g:%s" % slug, current_value)
 
+@task
+def librato_metric_task(name, num, attributes=None, metric_type="gauge",
+                        **kwargs):
+    connection = librato.connect(settings.APP_METRICS_LIBRATO_USER,
+                                 settings.APP_METRICS_LIBRATO_TOKEN)
+
+    if metric_type == "counter":
+        metric = Counter(connection, name, attributes=attributes)
+    else:
+        metric = Gauge(connection, name, attributes=attributes)
+
+    metric.add(num, source=settings.APP_METRICS_LIBRATO_SOURCE)
