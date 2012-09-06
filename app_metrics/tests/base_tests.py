@@ -7,6 +7,7 @@ from django.core import management
 from django.conf import settings
 from django.core import mail
 from django.contrib.auth.models import User
+from django.core.exceptions import ImproperlyConfigured
 
 from app_metrics.exceptions import TimerError
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear, Gauge
@@ -14,6 +15,15 @@ from app_metrics.utils import *
 from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year
 
 class MetricCreationTests(TestCase):
+
+    def test_auto_slug_creation(self):
+        new_metric = Metric.objects.create(name='foo bar')
+        self.assertEqual(new_metric.name, 'foo bar')
+        self.assertEqual(new_metric.slug, 'foo-bar')
+
+        new_metric2 = Metric.objects.create(name='foo bar')
+        self.assertEqual(new_metric2.name, 'foo bar')
+        self.assertEqual(new_metric2.slug, 'foo-bar_1')
 
     def test_metric(self):
         new_metric = create_metric(name='Test Metric Class',
@@ -288,3 +298,36 @@ class TimerTests(TestCase):
         self.assertEqual(self.timer.elapsed(), 2.2)
 
     # The ``Timer.store()`` is tested as part of the statsd backend tests.
+
+class MixpanelCommandTest1(TestCase):
+    """ Test out our management command noops """
+
+    def setUp(self):
+        new_metric = Metric.objects.create(name='foo bar')
+        i = MetricItem.objects.create(metric=new_metric)
+        self.old_backend = settings.APP_METRICS_BACKEND
+        settings.APP_METRICS_BACKEND = 'app_metrics.backends.db'
+
+    def test_mixpanel_noop(self):
+        self.assertEqual(1, MetricItem.objects.all().count())
+        management.call_command('move_to_mixpanel')
+        self.assertEqual(1, MetricItem.objects.all().count())
+
+    def tearDown(self):
+        settings.APP_METRICS_BACKEND = self.old_backend
+
+class MixpanelCommandTest2(TestCase):
+    """ Test out our management command works """
+
+    def setUp(self):
+        new_metric = Metric.objects.create(name='foo bar')
+        i = MetricItem.objects.create(metric=new_metric)
+        self.old_backend = settings.APP_METRICS_BACKEND
+        settings.APP_METRICS_BACKEND = 'app_metrics.backends.mixpanel'
+
+    def test_mixpanel_op(self):
+        self.assertEqual(1, MetricItem.objects.all().count())
+        self.assertRaises(ImproperlyConfigured, management.call_command, 'move_to_mixpanel')
+
+    def tearDown(self):
+        settings.APP_METRICS_BACKEND = self.old_backend

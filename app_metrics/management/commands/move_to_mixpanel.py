@@ -1,24 +1,25 @@
-from django.core.management.base import NoArgsCommand 
+from django.core.management.base import NoArgsCommand
 
 from app_metrics.models import MetricItem
 from app_metrics.backends.mixpanel import metric
+from app_metrics.utils import get_backend
 
-class Command(NoArgsCommand): 
-    help = "Move MetricItems from the db backend to MixPanel" 
+class Command(NoArgsCommand):
+    help = "Move MetricItems from the db backend to MixPanel"
 
-    requires_model_validation = True 
+    requires_model_validation = True
 
-    def handle_noargs(self, **options): 
-        """ Move MetricItems from the db backend to MixPanel" """ 
+    def handle_noargs(self, **options):
+        """ Move MetricItems from the db backend to MixPanel" """
 
-        backend = get_backend() 
+        backend = get_backend()
 
         # If not using Mixpanel this command is a NOOP
-        if backend != 'app_metrics.backends.mixpanel': 
+        if backend != 'app_metrics.backends.mixpanel':
             print "You need to set the backend to MixPanel"
-            return 
+            return
 
-        items = MetricItem.objects.all() 
+        items = MetricItem.objects.all()
 
         for i in items:
             properties = {
@@ -26,5 +27,5 @@ class Command(NoArgsCommand):
             }
             metric(i.metric.slug, num=i.num, properties=properties)
 
-        # Kill off our items 
-        items.delete() 
+        # Kill off our items
+        items.delete()

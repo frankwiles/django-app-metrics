@@ -21,6 +21,7 @@ COVERAGE_MODULE_EXCLUDES = [
     'tests$', 'settings$', 'urls$',
     'common.views.test', '__init__', 'django',
     'migrations', 'djcelery']
+COVERAGE_REPORT_HTML_OUTPUT_DIR = './coverage/'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
