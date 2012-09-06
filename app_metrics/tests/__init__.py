@@ -18,3 +18,12 @@ except ImportError:
 
 if redis is not None:
     from app_metrics.tests.redis_tests import *
+
+try:
+    import librato
+except ImportError:
+    print "Skipping librato tests..."
+    librato = None
+
+if librato is not None:
+    from app_metrics.tests.librato_tests import *

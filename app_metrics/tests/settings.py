@@ -1,4 +1,7 @@
+import os
 import django
+
+BASE_PATH = os.path.dirname(__file__)
 
 if django.VERSION[:2] >= (1, 3):
     DATABASES = {
@@ -21,7 +24,7 @@ COVERAGE_MODULE_EXCLUDES = [
     'tests$', 'settings$', 'urls$',
     'common.views.test', '__init__', 'django',
     'migrations', 'djcelery']
-COVERAGE_REPORT_HTML_OUTPUT_DIR = './coverage/'
+COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(BASE_PATH, 'coverage')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
