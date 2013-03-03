@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from app_metrics.models import Metric, MetricSet, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear
+from app_metrics.models import (Metric, MetricSet, MetricItem, MetricDay,
+                                MetricWeek, MetricMonth, MetricYear
+                                )
+
 
 class MetricAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'slug', 'num')
