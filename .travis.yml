@@ -12,5 +12,6 @@ install:
 script:
   - django-admin.py test --settings=app_metrics.tests.settings app_metrics
 env:
-  - DJANGO=1.3.3
-  - DJANGO=1.4.1
+  - DJANGO=1.3.7
+  - DJANGO=1.4.5
+  - DJANGO=1.5
