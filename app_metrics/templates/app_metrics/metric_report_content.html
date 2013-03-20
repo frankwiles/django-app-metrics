@@ -1,0 +1,23 @@
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+        {% for date_entry in date_list %}
+            <th>{{ date_entry }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for metric, values in metrics %}
+        <tr>
+            <td>{{ metric.name }}</td>
+            {% for value in values %}
+            <td>{{ value.num }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
