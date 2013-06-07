@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'app_metrics',
     'app_metrics.tests',
     'djcelery',
-    'django_coverage'
+    'django_coverage',
+    'south'
 ]
 
 ROOT_URLCONF = 'app_metrics.tests.urls'
