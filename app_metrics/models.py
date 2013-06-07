@@ -2,11 +2,12 @@ import datetime
 import logging
 
 from django.conf import settings
+from django import forms
 from django.db import models, IntegrityError
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from bitfield import BitField
+import bitfield
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
@@ -164,13 +165,44 @@ class Gauge(models.Model):
         return super(Gauge, self).save(*args, **kwargs)
 
 
+class MyBitFormField(forms.IntegerField):
+    """
+    Once issue 28 is fixed upstream, this override isn't needed
+    https://github.com/disqus/django-bitfield/issues/28
+    """
+    def __init__(self, choices=(), widget=bitfield.forms.BitFieldCheckboxSelectMultiple, *args, **kwargs):
+        if isinstance(kwargs['initial'],int):
+            iv = kwargs['initial']
+            l = []
+            for i in range(0, 63):
+               if (1<<i) & iv > 0:
+                       l += [choices[i][0]]
+            kwargs['initial'] = l
+        self.widget = widget
+        super(MyBitFormField, self).__init__(widget=widget, *args, **kwargs)
+        self.choices = self.widget.choices = choices
+
+    def clean(self, value):
+        if not value:
+            return 0
+
+        # Assume an iterable which contains an item per flag that's enabled
+        result = bitfield.BitHandler(0, [k for k, v in self.choices])
+        for k in value:
+            try:
+                setattr(result, str(k), True)
+            except AttributeError:
+                raise forms.ValidationError('Unknown choice: %r' % (k,))
+        return int(result)
+
+
 class ThresholdActiveManager(models.Manager):
 
     def get_query_set(self):
         return super(ThresholdActiveManager, self).get_query_set().filter(is_active=True)
  
 
-class DayChoiceField(BitField):
+class DayChoiceField(bitfield.BitField):
     """
     Custom field to store days of the week
     """
@@ -186,6 +218,9 @@ class DayChoiceField(BitField):
 
     def __init__(self, *args, **kwargs):
         super(DayChoiceField, self).__init__(flags=DayChoiceField.flags, default=DayChoiceField.default, *args, **kwargs)
+
+    def formfield(self, form_class=MyBitFormField, **kwargs):
+        return super(DayChoiceField, self).formfield(form_class=form_class, **kwargs)
 
     @staticmethod
     def flags_as_weekdays(field):
@@ -319,5 +354,4 @@ class Threshold(models.Model):
             if total > self.threshold_amount:
                 self._logger.error(self.describe)
                 return False
-        return True
-        
+        return True 
