@@ -1,9 +1,18 @@
 from django.contrib import admin
 
 from app_metrics.models import (Metric, MetricSet, MetricItem, MetricDay,
-                                MetricWeek, MetricMonth, MetricYear
+                                MetricWeek, MetricMonth, MetricYear, Threshold, DayChoiceField
                                 )
 
+from bitfield.forms import BitFieldCheckboxSelectMultiple
+
+
+class ThresholdAdmin(admin.ModelAdmin):
+    list_display = ('describe', 'active')
+    list_filter = ['metric__name']
+    formfield_overrides = {
+        DayChoiceField: {'widget': BitFieldCheckboxSelectMultiple},
+    }
 
 class MetricAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'slug', 'num')
@@ -14,6 +23,7 @@ class MetricAdmin(admin.ModelAdmin):
 
 admin.site.register(Metric)
 admin.site.register(MetricSet)
+admin.site.register(Threshold, ThresholdAdmin)
 admin.site.register(MetricDay, MetricAdmin)
 admin.site.register(MetricWeek, MetricAdmin)
 admin.site.register(MetricMonth, MetricAdmin)
