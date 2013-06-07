@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+
+{% block content %}
+<ul>
+    {% regroup dates by year as year_dates %}
+    {% for group in year_dates %}
+    <li><a href="{% url 'app_metrics:yearly_metric_report' year=group.grouper %}">{{ group.grouper }}</a></li>
+    <ul>
+    {% for d in group.list %}
+        <li><a href="{% url 'app_metrics:monthly_metric_report' month=d|date:"b" year=d.year %}">{{ d|date:"F" }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endfor %}
+</ul>
+{% endblock %}

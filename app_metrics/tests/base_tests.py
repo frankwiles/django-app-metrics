@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 
 from app_metrics.exceptions import TimerError
-from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear, Gauge
+from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear, Gauge, Threshold, DayChoiceField
 from app_metrics.utils import *
 from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year
 
@@ -336,3 +336,102 @@ class MixpanelCommandTest2(TestCase):
 
     def tearDown(self):
         settings.APP_METRICS_BACKEND = self.old_backend
+
+class ThresholdTest(TestCase):
+    
+    def setUp(self):
+        self.metric = create_metric(name='Test Treshold', slug='test_thresh')
+        self.thresh = Threshold(metric=self.metric, is_active=True, name='Testing Threshold')
+        self.thresh.time_measurement = Threshold.TIME_MINS
+        self.thresh.time_amount = 10
+        self.thresh.threshold_direction = Threshold.THRESHOLD_ABOVE
+        self.thresh.threshold_amount = 3
+        self.thresh.save()
+
+    def tearDown(self):
+        MetricItem.objects.all().delete()
+        self.metric.delete()
+        self.thresh.delete()
+
+    def test_above(self):
+        metric('test_thresh')
+        # passes the test, with one metric
+        self.assertTrue(self.thresh.test())
+        metric('test_thresh', num=3)
+        # fails the test with metrics
+        self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
+        self.assertFalse(self.thresh.test())
+
+    def test_below(self):
+        self.thresh.threshold_direction = Threshold.THRESHOLD_BELOW
+        self.thresh.save()
+        metric('test_thresh')
+        # fails test with one metric
+        self.assertEqual(self.thresh.get_metric_total_in_period(), 1)
+        self.assertFalse(self.thresh.test())
+        metric('test_thresh', num=3)
+        # passes test with more metrics
+        self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
+        self.assertTrue(self.thresh.test())
+
+    def test_time(self):
+        metric('test_thresh', 4)
+        # fails test with one metric
+        self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
+        self.assertFalse(self.thresh.test())
+        # re-stamp the metrics to be outside the time range
+        earlier = datetime.datetime.now() - datetime.timedelta(minutes=20)
+        MetricItem.objects.all().update(created=earlier)
+        # passes test, no metrics in the time period
+        self.assertTrue(self.thresh.test())
+
+    def test_exclusion(self):
+        # current run time falls within the exclusionary period
+        self.thresh.exclude_hour_start = datetime.datetime.now().hour - 1
+        self.thresh.exclude_hour_end = datetime.datetime.now().hour + 1
+        self.thresh.save()
+        # returns None when it doesn't run
+        self.assertEquals(self.thresh.test(), None)
+        # lookback time falls within the exclusionary period
+        self.thresh.exclude_hour_start = datetime.datetime.now().hour - 2
+        self.thresh.exclude_hour_end = datetime.datetime.now().hour - 1
+        self.thresh.time_amount = 2
+        self.thresh.time_measurement = Threshold.TIME_HOURS
+        self.thresh.save()
+        # returns None when it doesn't run
+        self.assertEquals(self.thresh.test(), None)
+
+    def test_days_off(self):
+        days_to_num = {
+            0: self.thresh.applies_for_days.monday,
+            1: self.thresh.applies_for_days.tuesday,
+            2: self.thresh.applies_for_days.wednesday,
+            3: self.thresh.applies_for_days.thursday,
+            4: self.thresh.applies_for_days.friday,
+            5: self.thresh.applies_for_days.saturday,
+            6: self.thresh.applies_for_days.sunday
+        }
+        today = days_to_num.get(datetime.date.today().weekday())
+        self.thresh.applies_for_days = self.thresh.applies_for_days & ~today 
+        self.thresh.save()
+        self.assertEqual(self.thresh.test(), None)
+        self.thresh.applies_for_days = 0
+        self.thresh.save()
+        metric('test_thresh')
+        # passes the test, with one metric
+        self.assertTrue(self.thresh.test())
+        metric('test_thresh', num=3)
+        # fails the test with metrics
+        self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
+        self.assertFalse(self.thresh.test())
+
+    def test_aggregated_data(self):
+        metric('test_thresh')
+        management.call_command('metrics_aggregate')
+        # passes the test, with one metric
+        self.assertTrue(self.thresh.test())
+        metric('test_thresh', num=3)
+        management.call_command('metrics_aggregate')
+        # fails the test with metrics
+        self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
+        self.assertFalse(self.thresh.test())

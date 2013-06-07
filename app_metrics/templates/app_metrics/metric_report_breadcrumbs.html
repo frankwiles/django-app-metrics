@@ -1,0 +1,25 @@
+{% load url from future %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">Home</a>
+&rsaquo; <a href="{% url 'app_metrics:metric_reports' %}">All Date Reports</a>
+{% if next_year %}
+{% url 'app_metrics:yearly_metric_report' year=next_year.year as next_url %}
+{% else %}{% if next_month %}
+{% url 'app_metrics:monthly_metric_report' month=next_month|date:"b" year=next_month.year as next_url %}
+{% endif %}
+{% endif %}
+{% if next_url %}
+&rsaquo; <a href="{{ next_url }}">Next Date Report</a>
+{% endif %}
+{% if previous_year %}
+{% url 'app_metrics:yearly_metric_report' year=previous_year.year as prev_url %}
+{% else %}{% if previous_month %}
+{% url 'app_metrics:monthly_metric_report' month=previous_month|date:"b" year=previous_month.year as prev_url %}
+{% endif %}
+{% endif %}
+{% if prev_url %}
+&rsaquo; <a href="{{ prev_url }}">Previous Date Report</a>
+{% endif %}
+</div>
+{% endblock %}
