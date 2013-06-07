@@ -25,6 +25,7 @@ setup(
     install_requires = [
         'celery',
         'django-celery',
+        'django-bitfield==1.6.4'
     ],
     tests_require = ['mock', 'django-coverage', 'coverage'],
     classifiers=[
