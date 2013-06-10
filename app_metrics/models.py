@@ -340,7 +340,7 @@ class Threshold(models.Model):
         total += clean(MetricDay.objects.filter(metric=self.metric, created__range=(exclude_start, exclude_end)).aggregate(models.Sum('num')).get('num__sum', 0))
         return total
 
-    def test(self, now=None):
+    def reached(self, now=None):
         if now is None:
             now = datetime.datetime.now()
         if self._is_excluded(now):
