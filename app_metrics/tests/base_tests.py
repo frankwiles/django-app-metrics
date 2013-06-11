@@ -356,11 +356,11 @@ class ThresholdTest(TestCase):
     def test_above(self):
         metric('test_thresh')
         # passes the test, with one metric
-        self.assertTrue(self.thresh.reached())
+        self.assertFalse(self.thresh.is_reached())
         metric('test_thresh', num=3)
         # fails the test with metrics
         self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
-        self.assertFalse(self.thresh.reached())
+        self.assertTrue(self.thresh.is_reached())
 
     def test_below(self):
         self.thresh.threshold_direction = Threshold.THRESHOLD_BELOW
@@ -368,22 +368,22 @@ class ThresholdTest(TestCase):
         metric('test_thresh')
         # fails test with one metric
         self.assertEqual(self.thresh.get_metric_total_in_period(), 1)
-        self.assertFalse(self.thresh.reached())
+        self.assertTrue(self.thresh.is_reached())
         metric('test_thresh', num=3)
         # passes test with more metrics
         self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
-        self.assertTrue(self.thresh.reached())
+        self.assertFalse(self.thresh.is_reached())
 
     def test_time(self):
         metric('test_thresh', 4)
         # fails test with one metric
         self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
-        self.assertFalse(self.thresh.reached())
+        self.assertTrue(self.thresh.is_reached())
         # re-stamp the metrics to be outside the time range
         earlier = datetime.datetime.now() - datetime.timedelta(minutes=20)
         MetricItem.objects.all().update(created=earlier)
         # passes test, no metrics in the time period
-        self.assertTrue(self.thresh.reached())
+        self.assertFalse(self.thresh.is_reached())
 
     def test_exclusion(self):
         # current run time falls within the exclusionary period
@@ -391,7 +391,7 @@ class ThresholdTest(TestCase):
         self.thresh.exclude_hour_end = datetime.datetime.now().hour + 1
         self.thresh.save()
         # returns None when it doesn't run
-        self.assertEquals(self.thresh.reached(), None)
+        self.assertEquals(self.thresh.is_reached(), None)
         # lookback time falls within the exclusionary period
         self.thresh.exclude_hour_start = datetime.datetime.now().hour - 2
         self.thresh.exclude_hour_end = datetime.datetime.now().hour - 1
@@ -399,7 +399,7 @@ class ThresholdTest(TestCase):
         self.thresh.time_measurement = Threshold.TIME_HOURS
         self.thresh.save()
         # returns None when it doesn't run
-        self.assertEquals(self.thresh.reached(), None)
+        self.assertEquals(self.thresh.is_reached(), None)
 
     def test_days_off(self):
         days_to_num = {
@@ -414,24 +414,24 @@ class ThresholdTest(TestCase):
         today = days_to_num.get(datetime.date.today().weekday())
         self.thresh.applies_for_days = self.thresh.applies_for_days & ~today 
         self.thresh.save()
-        self.assertEqual(self.thresh.reached(), None)
+        self.assertEqual(self.thresh.is_reached(), None)
         self.thresh.applies_for_days = 0
         self.thresh.save()
         metric('test_thresh')
         # passes the test, with one metric
-        self.assertTrue(self.thresh.reached())
+        self.assertFalse(self.thresh.is_reached())
         metric('test_thresh', num=3)
         # fails the test with metrics
         self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
-        self.assertFalse(self.thresh.reached())
+        self.assertTrue(self.thresh.is_reached())
 
     def test_aggregated_data(self):
         metric('test_thresh')
         management.call_command('metrics_aggregate')
         # passes the test, with one metric
-        self.assertTrue(self.thresh.reached())
+        self.assertFalse(self.thresh.is_reached())
         metric('test_thresh', num=3)
         management.call_command('metrics_aggregate')
         # fails the test with metrics
         self.assertEqual(self.thresh.get_metric_total_in_period(), 4)
-        self.assertFalse(self.thresh.reached())
+        self.assertTrue(self.thresh.is_reached())

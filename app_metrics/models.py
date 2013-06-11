@@ -340,7 +340,18 @@ class Threshold(models.Model):
         total += clean(MetricDay.objects.filter(metric=self.metric, created__range=(exclude_start, exclude_end)).aggregate(models.Sum('num')).get('num__sum', 0))
         return total
 
-    def reached(self, now=None):
+    def log_is_reached(self, now=None):
+        val = self.is_reached(now=now)
+        if val is True:
+            self._logger.error(self.describe)
+        elif val is False: #strict False check, None is a valid return value
+            self._logger.info(self.describe)
+
+    def is_reached(self, now=None):
+        """
+        A return value of None means the threshold was not evaluated
+        because it falls in the exclusionary period
+        """
         if now is None:
             now = datetime.datetime.now()
         if self._is_excluded(now):
@@ -348,10 +359,8 @@ class Threshold(models.Model):
         total = self.get_metric_total_in_period(now)
         if self.threshold_direction == self.THRESHOLD_BELOW:
             if total < self.threshold_amount:
-                self._logger.error(self.describe)
-                return False
+                return True
         elif self.threshold_direction == self.THRESHOLD_ABOVE:
             if total > self.threshold_amount:
-                self._logger.error(self.describe)
-                return False
-        return True 
+                return True
+        return False

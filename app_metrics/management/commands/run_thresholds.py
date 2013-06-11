@@ -14,4 +14,4 @@ class Command(NoArgsCommand):
             print "Useless use of run_thresholds when using Mixpanel backend"
             return 
 
-        [ t.test() for t in Threshold.active.all() ]
+        [ t.log_is_reached() for t in Threshold.active.all() ]
