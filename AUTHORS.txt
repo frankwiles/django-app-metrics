@@ -9,6 +9,7 @@ Jannis Leidel <jezdez@enn.io>
 Flávio Juvena l<flaviojuvenal@gmail.com>
 Daniel Lindsley <daniel@toastdriven.com>
 Hannes Struß <x@hannesstruss.de>
+Diogo Laginha
 
 Special thanks to RueLaLa.com for sponsoring the additions of the timers,
 gauges, and the statsd backend in general
