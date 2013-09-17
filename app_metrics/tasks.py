@@ -31,8 +31,6 @@ except:
 # For librato support
 try:
     import librato
-    from librato.metrics import Gauge as LibratoGauge
-    from librato.metrics import Counter as LibratoCounter
 except ImportError:
     librato = None
 
@@ -173,14 +171,8 @@ def redis_gauge_task(slug, current_value, **kwargs):
 # Librato tasks
 
 @task
-def librato_metric_task(name, num, attributes=None, metric_type="gauge",
-                        **kwargs):
-    connection = librato.connect(settings.APP_METRICS_LIBRATO_USER,
-                                 settings.APP_METRICS_LIBRATO_TOKEN)
+def librato_metric_task(name, num, **kwargs):
+    api = librato.connect(settings.APP_METRICS_LIBRATO_USER,
+                          settings.APP_METRICS_LIBRATO_TOKEN)
+    api.submit(name, num, **kwargs)
 
-    if metric_type == "counter":
-        metric = LibratoCounter(connection, name, attributes=attributes)
-    else:
-        metric = LibratoGauge(connection, name, attributes=attributes)
-
-    metric.add(num, source=settings.APP_METRICS_LIBRATO_SOURCE)
