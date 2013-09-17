@@ -114,12 +114,10 @@ gauge() aspects, but not timer aspects of app_metrics.
 
 ``app_metrics.backends.librato_backend`` - This backend lets you send metrics to
 Librato. See the `Librato documentation`_ for more information on their API.
-This requires the `Librato library`_. It uses use a librato Gauge by default,
-although this can be overridden by supplying ``metric_type="counter"`` as a
-keyword arg to ``metric()``.
+This requires the `Librato library`_.
 
 .. _`Librato documentation`: http://dev.librato.com/v1/metrics#metrics
-.. _`Librato library`: http://pypi.python.org/pypi/librato/0.2
+.. _`Librato library`: http://pypi.python.org/pypi/librato-metrics
 
 ``app_metrics.backends.composite`` - This backend lets you compose multiple
 backends to which metric-calls are handed. The backends to which the call is

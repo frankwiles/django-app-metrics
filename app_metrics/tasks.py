@@ -36,6 +36,7 @@ try:
 except ImportError:
     librato = None
 
+
 class MixPanelTrackError(Exception):
     pass
 
@@ -71,7 +72,6 @@ def _get_token():
 
 @task
 def mixpanel_metric_task(slug, num, properties=None, **kwargs):
-
     token = _get_token()
     if properties is None:
         properties = dict()
@@ -112,6 +112,7 @@ def statsd_metric_task(slug, num=1, **kwargs):
     counter = statsd.Counter(slug, connection=conn)
     counter += num
 
+
 @task
 def statsd_timing_task(slug, seconds_taken=1.0, **kwargs):
     conn = get_statsd_conn()
@@ -144,6 +145,7 @@ def get_redis_conn():
     )
     return conn
 
+
 @task
 def redis_metric_task(slug, num=1, **kwargs):
     # Record a metric in redis. We prefix our key here with 'm' for Metric
@@ -163,6 +165,7 @@ def redis_metric_task(slug, num=1, **kwargs):
     r.incrby(month_key, num)
     r.incrby(year_key, num)
 
+
 @task
 def redis_gauge_task(slug, current_value, **kwargs):
     # We prefix our keys with a 'g' here for Gauge to avoid issues
@@ -173,14 +176,7 @@ def redis_gauge_task(slug, current_value, **kwargs):
 # Librato tasks
 
 @task
-def librato_metric_task(name, num, attributes=None, metric_type="gauge",
-                        **kwargs):
-    connection = librato.connect(settings.APP_METRICS_LIBRATO_USER,
-                                 settings.APP_METRICS_LIBRATO_TOKEN)
-
-    if metric_type == "counter":
-        metric = LibratoCounter(connection, name, attributes=attributes)
-    else:
-        metric = LibratoGauge(connection, name, attributes=attributes)
-
-    metric.add(num, source=settings.APP_METRICS_LIBRATO_SOURCE)
+def librato_metric_task(name, num, **kwargs):
+    api = librato.connect(settings.APP_METRICS_LIBRATO_USER,
+                          settings.APP_METRICS_LIBRATO_TOKEN)
+    api.submit(name, num, **kwargs)
