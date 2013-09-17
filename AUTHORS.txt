@@ -10,6 +10,8 @@ Flávio Juvena l<flaviojuvenal@gmail.com>
 Daniel Lindsley <daniel@toastdriven.com>
 Hannes Struß <x@hannesstruss.de>
 Diogo Laginha
+Alexander Malaev <scream@spuge.net>
+Roger Boardman <roger@bxthree.com>
 
 Special thanks to RueLaLa.com for sponsoring the additions of the timers,
 gauges, and the statsd backend in general
