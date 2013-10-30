@@ -51,6 +51,7 @@ class BaseMetricReport(BaseReport):
         context = super(BaseMetricReport, self).get_context_data(*args, **kwargs)
         context['title'] = getattr(self, 'title')
         metrics = defaultdict(dict)
+        context['date_list'] = list(context['date_list'])
         context['date_list'].sort()  # sort the django provided dates
         context['date_list'] = self.create_date_list(context['date_list'])
         # fill in the entries we have
