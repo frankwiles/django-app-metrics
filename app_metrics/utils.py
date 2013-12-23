@@ -89,7 +89,7 @@ def get_or_create_metric(name, slug):
     if not should_create_models():
         return
 
-    metric, created = Metric.objects.get_or_create(name=name, slug=slug)
+    metric, created = Metric.objects.get_or_create(slug=slug, defaults={'name': name})
     return metric
 
 
