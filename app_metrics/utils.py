@@ -16,11 +16,21 @@ def get_backend():
     return getattr(settings, 'APP_METRICS_BACKEND', 'app_metrics.backends.db')
 
 
+def get_composite_backends():
+    return getattr(settings, 'APP_METRICS_COMPOSITE_BACKENDS', ())
+
+
 def should_create_models(backend=None):
     if backend is None:
         backend = get_backend()
 
-    return backend == 'app_metrics.backends.db'
+    if backend == 'app_metrics.backends.composite':
+        backends = get_composite_backends()
+        for b in backends:
+            if b == 'app_metrics.backends.db':
+                return True
+    else:
+        return backend == 'app_metrics.backends.db'
 
 
 def create_metric_set(name=None, metrics=None, email_recipients=None,
@@ -79,7 +89,7 @@ def get_or_create_metric(name, slug):
     if not should_create_models():
         return
 
-    metric, created = Metric.objects.get_or_create(name=name, slug=slug)
+    metric, created = Metric.objects.get_or_create(slug=slug, defaults={'name': name})
     return metric
 
 
