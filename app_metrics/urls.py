@@ -1,4 +1,7 @@
-from django.conf.urls import patterns, url
+try:
+    from django.conf.urls.defaults import patterns, url
+except ImportError:
+    from django.conf.urls import patterns, url
 from app_metrics.views import MonthlyMetricReport, YearlyMetricReport, MetricReports
 
 # Add these URLs to your main urlconf. Be sure to keep the namespace and app_name as `app_metrics`, the templates explicitly use them
