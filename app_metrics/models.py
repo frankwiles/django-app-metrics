@@ -6,6 +6,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from app_metrics.compat import User
 
+try:
+    from django.db.transaction import atomic
+except ImportError:
+    # Django < 1.6 use noop context manager
+    from contextlib import contextmanager
+    atomic = contextmanager(lambda:(yield))
+
 
 class Metric(models.Model):
     """ The type of metric we want to store """
@@ -25,7 +32,8 @@ class Metric(models.Model):
             i = 0
             while True:
                 try:
-                    return super(Metric, self).save(*args, **kwargs)
+                    with atomic():
+                        return super(Metric, self).save(*args, **kwargs)
                 except IntegrityError:
                     i += 1
                     self.slug = "%s_%d" % (self.slug, i)
