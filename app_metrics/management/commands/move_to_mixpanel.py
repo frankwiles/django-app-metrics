@@ -2,7 +2,8 @@ from django.core.management.base import NoArgsCommand
 
 from app_metrics.models import MetricItem
 from app_metrics.backends.mixpanel import metric
-from app_metrics.utils import get_backend
+from app_metrics.utils import get_backend, get_timestamp
+
 
 class Command(NoArgsCommand):
     help = "Move MetricItems from the db backend to MixPanel"
@@ -23,7 +24,7 @@ class Command(NoArgsCommand):
 
         for i in items:
             properties = {
-                'time': i.created.strftime('%s'),
+                'time': int(get_timestamp(i.created)),
             }
             metric(i.metric.slug, num=i.num, properties=properties)
 

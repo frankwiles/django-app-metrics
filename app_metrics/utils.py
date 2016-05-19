@@ -3,6 +3,7 @@ import datetime
 import time
 from django.conf import settings
 from django.utils.importlib import import_module
+from django.utils import timezone
 
 from app_metrics.exceptions import InvalidMetricsBackend, TimerError
 from app_metrics.models import Metric, MetricSet
@@ -227,3 +228,17 @@ def get_previous_year(date):
     new = date
     return new.replace(year=new.year-1)
 
+def timedelta_total_seconds(timedelta):
+    return timedelta.seconds + timedelta.days * 24 * 3600
+
+def get_timestamp(dt):
+    if dt.tzinfo is None:
+        return time.mktime((dt.year, dt.month, dt.day,
+                             dt.hour, dt.minute, dt.second,
+                             -1, -1, -1))
+    else:
+        timedelta = dt - datetime.datetime(1970, 1, 1, tzinfo=timezone.utc)
+        try:
+            return timedelta.total_seconds()
+        except AttributeError:
+            return timedelta_total_seconds(timedelta)
