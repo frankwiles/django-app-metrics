@@ -179,4 +179,5 @@ def redis_gauge_task(slug, current_value, **kwargs):
 def librato_metric_task(name, num, **kwargs):
     api = librato.connect(settings.APP_METRICS_LIBRATO_USER,
                           settings.APP_METRICS_LIBRATO_TOKEN)
-    api.submit(name, num, **kwargs)
+    source = settings.APP_METRICS_LIBRATO_SOURCE
+    api.submit(name, num, source=source, **kwargs)
