@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core import mail
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.utils import timezone
 
 from app_metrics.exceptions import TimerError
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear, Gauge
@@ -336,3 +337,32 @@ class MixpanelCommandTest2(TestCase):
 
     def tearDown(self):
         settings.APP_METRICS_BACKEND = self.old_backend
+
+class TestTimezone(datetime.tzinfo):
+    def utcoffset(self, dt):
+        return datetime.timedelta(hours=-9)
+
+class TimestampTest(TestCase):
+    """ Test timestamp utilities """
+
+    def test_tz_timestamp(self):
+        dt = datetime.datetime(2016, 05, 01, 0, 0, 0, tzinfo=timezone.utc)
+        utc_ts = get_timestamp(dt)
+        dt_tz = datetime.datetime(2016, 05, 01, 0, 0, 0, tzinfo=TestTimezone())
+        tz_ts = get_timestamp(dt_tz)
+
+        # timestamp with a UTC offset of -9 hours should be ahead by 32400 seconds.
+        self.assertEqual(utc_ts, tz_ts - 32400)
+
+    def test_naive_timestamp(self):
+        dt = datetime.datetime(2016, 05, 01, 0, 0, 0, tzinfo=None)
+
+        # Naive datetime to timestamp will just use local timezone. Same
+        # behavior as using strftime('%s') on 'nix systems.
+
+        # The above dt, even in a TZ of -12 hours would have to be more than
+        # or equal to 1462060800 (UTC) - 43200 seconds as a timestamp.
+        self.assertGreaterEqual(get_timestamp(dt), 1462060800 - 43200)
+
+        # However, it should be less than or equal to the same +12 hours.
+        self.assertLessEqual(get_timestamp(dt), 1462060800 + 43200)
