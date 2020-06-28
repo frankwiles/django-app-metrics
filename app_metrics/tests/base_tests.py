@@ -2,11 +2,11 @@ import datetime
 from decimal import Decimal
 import unittest.mock
 
-from django.test import TestCase
+from django.test import TransactionTestCase, TestCase
 from django.core import management
 from django.conf import settings
 from django.core import mail
-from django.contrib.auth.models import User
+from django.db import transaction, IntegrityError
 from django.core.exceptions import ImproperlyConfigured
 
 from app_metrics.exceptions import TimerError
@@ -16,12 +16,19 @@ from app_metrics.trending import _trending_for_current_day, _trending_for_yester
 
 class MetricCreationTests(TestCase):
 
+class MetricCreationTests(TransactionTestCase):
+
     def test_auto_slug_creation(self):
         new_metric = Metric.objects.create(name='foo bar')
         self.assertEqual(new_metric.name, 'foo bar')
         self.assertEqual(new_metric.slug, 'foo-bar')
 
-        new_metric2 = Metric.objects.create(name='foo bar')
+        try:
+            with transaction.atomic():
+                new_metric2 = Metric.objects.create(name='foo bar')
+        except IntegrityError:
+            pass
+
         self.assertEqual(new_metric2.name, 'foo bar')
         self.assertEqual(new_metric2.slug, 'foo-bar_1')
 

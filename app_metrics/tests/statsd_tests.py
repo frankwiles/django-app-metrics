@@ -4,8 +4,15 @@ import time
 from django.test import TestCase
 from django.conf import settings
 from app_metrics.utils import metric, timing, gauge
+from unittest import skipUnless
+
+try:
+    import statsd
+except ImportError:
+    statsd = None
 
 
+@skipUnless(statsd, "No statsd module. Skipping.")
 class StatsdCreationTests(TestCase):
     def setUp(self):
         super(StatsdCreationTests, self).setUp()
