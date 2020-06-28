@@ -1,4 +1,4 @@
-import mock
+import unittest.mock
 from django.test import TestCase
 from django.conf import settings
 from app_metrics.utils import metric, gauge

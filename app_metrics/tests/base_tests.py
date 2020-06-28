@@ -1,6 +1,6 @@
 import datetime
 from decimal import Decimal
-import mock
+import unittest.mock
 
 from django.test import TestCase
 from django.core import management

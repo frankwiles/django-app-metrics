@@ -1,5 +1,5 @@
 from decimal import Decimal
-import mock
+import unittest.mock
 import time
 from django.test import TestCase
 from django.conf import settings
