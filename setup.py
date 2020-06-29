@@ -16,7 +16,7 @@ setup(
     author='Frank Wiles',
     author_email='frank@revsys.com',
     url='https://github.com/frankwiles/django-app-metrics',
-    packages=find_packages(),
+    packages=find_packages(exclude=['app_metrics/tests*']),
     package_data={
         'app_metrics': [
             'templates/app_metrics/*',
@@ -26,7 +26,7 @@ setup(
         'celery',
         'django-celery',
     ],
-    tests_require = ['mock', 'django-coverage', 'coverage'],
+    tests_require = ['pytest-django', 'pytest-cov'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
