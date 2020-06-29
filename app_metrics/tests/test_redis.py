@@ -16,7 +16,6 @@ class RedisTests(TestCase):
         super(RedisTests, self).setUp()
         self.old_backend = getattr(settings, 'APP_METRICS_BACKEND', None)
         settings.APP_METRICS_BACKEND = 'app_metrics.backends.redis'
-        settings.APP_METRICS_REDIS_HOST = '192.168.99.100'
 
     def tearDown(self):
         settings.APP_METRICS_BACKEND = self.old_backend
