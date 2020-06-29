@@ -1,7 +1,7 @@
 import datetime 
 import string
 
-from django.core.management.base import NoArgsCommand 
+from django.core.management import BaseCommand
 from django.conf import settings 
 from django.db.models import Q
 from django.utils import translation
@@ -11,12 +11,12 @@ from app_metrics.reports import generate_report
 from app_metrics.models import MetricSet, Metric 
 from app_metrics.utils import get_backend 
 
-class Command(NoArgsCommand): 
+class Command(BaseCommand): 
     help = "Send Report E-mails" 
     requires_model_validation = True 
     can_import_settings = True 
 
-    def handle_noargs(self, **options): 
+    def handle(self, **options): 
         """ Send Report E-mails """ 
 
         from django.conf import settings
@@ -26,7 +26,7 @@ class Command(NoArgsCommand):
 
         # This command is a NOOP if using the Mixpanel backend 
         if backend == 'app_metrics.backends.mixpanel': 
-            print "Useless use of metrics_send_email when using Mixpanel backend."
+            print("Useless use of metrics_send_email when using Mixpanel backend.")
             return 
 
         # Determine if we should also send any weekly or monthly reports 

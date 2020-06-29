@@ -1,17 +1,13 @@
 import datetime
 
+from django.conf import settings
 from django.db import models, IntegrityError
+from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
-from app_metrics.compat import User
-
-try:
-    from django.db.transaction import atomic
-except ImportError:
-    # Django < 1.6 use noop context manager
-    from contextlib import contextmanager
-    atomic = contextmanager(lambda:(yield))
+USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 class Metric(models.Model):
@@ -45,7 +41,7 @@ class MetricSet(models.Model):
     """ A set of metrics that should be sent via email to certain users """
     name = models.CharField(_('name'), max_length=50)
     metrics = models.ManyToManyField(Metric, verbose_name=_('metrics'))
-    email_recipients = models.ManyToManyField(User, verbose_name=_('email recipients'))
+    email_recipients = models.ManyToManyField(USER_MODEL, verbose_name=_('email recipients'))
     no_email = models.BooleanField(_('no e-mail'), default=False)
     send_daily = models.BooleanField(_('send daily'), default=True)
     send_weekly = models.BooleanField(_('send weekly'), default=False)
@@ -61,9 +57,9 @@ class MetricSet(models.Model):
 
 class MetricItem(models.Model):
     """ Individual metric items """
-    metric = models.ForeignKey(Metric, verbose_name=_('metric'))
+    metric = models.ForeignKey(Metric, verbose_name=_('metric'), on_delete=models.PROTECT)
     num = models.IntegerField(_('number'), default=1)
-    created = models.DateTimeField(_('created'), default=datetime.datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
 
     class Meta:
         verbose_name = _('metric item')
@@ -79,7 +75,7 @@ class MetricItem(models.Model):
 
 class MetricDay(models.Model):
     """ Aggregation of Metrics on a per day basis """
-    metric = models.ForeignKey(Metric, verbose_name=_('metric'))
+    metric = models.ForeignKey(Metric, verbose_name=_('metric'), on_delete=models.PROTECT)
     num = models.BigIntegerField(_('number'), default=0)
     created = models.DateField(_('created'), default=datetime.date.today)
 
@@ -96,7 +92,7 @@ class MetricDay(models.Model):
 
 class MetricWeek(models.Model):
     """ Aggregation of Metrics on a weekly basis """
-    metric = models.ForeignKey(Metric, verbose_name=_('metric'))
+    metric = models.ForeignKey(Metric, verbose_name=_('metric'), on_delete=models.PROTECT)
     num = models.BigIntegerField(_('number'), default=0)
     created = models.DateField(_('created'), default=datetime.date.today)
 
@@ -114,7 +110,7 @@ class MetricWeek(models.Model):
 
 class MetricMonth(models.Model):
     """ Aggregation of Metrics on monthly basis """
-    metric = models.ForeignKey(Metric, verbose_name=('metric'))
+    metric = models.ForeignKey(Metric, verbose_name=('metric'), on_delete=models.PROTECT)
     num = models.BigIntegerField(_('number'), default=0)
     created = models.DateField(_('created'), default=datetime.date.today)
 
@@ -132,7 +128,7 @@ class MetricMonth(models.Model):
 
 class MetricYear(models.Model):
     """ Aggregation of Metrics on a yearly basis """
-    metric = models.ForeignKey(Metric, verbose_name=_('metric'))
+    metric = models.ForeignKey(Metric, verbose_name=_('metric'), on_delete=models.PROTECT)
     num = models.BigIntegerField(_('number'), default=0)
     created = models.DateField(_('created'), default=datetime.date.today)
 
@@ -154,8 +150,8 @@ class Gauge(models.Model):
     name = models.CharField(_('name'), max_length=50)
     slug = models.SlugField(_('slug'), unique=True, max_length=60)
     current_value = models.DecimalField(_('current value'), max_digits=15, decimal_places=6, default='0.00')
-    created = models.DateTimeField(_('created'), default=datetime.datetime.now)
-    updated = models.DateTimeField(_('updated'), default=datetime.datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
+    updated = models.DateTimeField(_('updated'), default=timezone.now)
 
     class Meta:
         verbose_name = _('gauge')
@@ -168,5 +164,5 @@ class Gauge(models.Model):
         if not self.id and not self.slug:
             self.slug = slugify(self.name)
 
-        self.updated = datetime.datetime.now()
+        self.updated = timezone.datetime.now()
         return super(Gauge, self).save(*args, **kwargs)

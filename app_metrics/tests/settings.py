@@ -1,33 +1,36 @@
 import os
 
-import django
-
 BASE_PATH = os.path.dirname(__file__)
 
-if django.VERSION[:2] >= (1, 3):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
     }
-else:
-    DATABASE_ENGINE = 'sqlite3'
-    DATABASE_NAME = ':memory:'
+}
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ]
+        }
+    },
+]
 
 SITE_ID = 1
 
 DEBUG = True
 
-TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
-
-COVERAGE_MODULE_EXCLUDES = [
-    'tests$', 'settings$', 'urls$',
-    'common.views.test', '__init__', 'django',
-    'migrations', 'djcelery'
+MIDDLEWARE = [
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
-
-COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(BASE_PATH, 'coverage')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -35,15 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.messages',
     'app_metrics',
-    'app_metrics.tests',
-    'djcelery',
-    'django_coverage'
 ]
 
 ROOT_URLCONF = 'app_metrics.tests.urls'
-
-CELERY_ALWAYS_EAGER = True
 
 APP_METRICS_BACKEND = 'app_metrics.backends.db'
 APP_METRICS_MIXPANEL_TOKEN = None

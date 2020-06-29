@@ -1,8 +1,16 @@
-import mock
+from unittest import mock
 from django.test import TestCase
 from django.conf import settings
 from app_metrics.utils import metric, gauge
+from unittest import skipUnless
 
+try:
+    import redis
+except ImportError:
+    redis = None
+
+
+@skipUnless(redis, "No redis module. Skipping.")
 class RedisTests(TestCase):
     def setUp(self):
         super(RedisTests, self).setUp()

@@ -40,7 +40,15 @@ settings and it will behave as if Celery was not configured.
 .. _Celery: http://celeryproject.org/
 .. _`django-celery`: http://ask.github.com/django-celery/
 
-Django 1.2 and above
+Django 2.2 and above
+Python 3.5 and above
+
+Support for older Django and Python
+-----------------------------------
+
+Django App Metrics v0.8.0 supports older versions of Django and Python if you still need it.
+
+``$ pip install django-app-metrics==0.8.0``
 
 Usage
 =====
