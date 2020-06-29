@@ -1,5 +1,5 @@
 from decimal import Decimal
-import unittest.mock
+from unittest import mock
 import time
 from django.test import TestCase
 from django.conf import settings
@@ -20,42 +20,40 @@ class StatsdCreationTests(TestCase):
         settings.APP_METRICS_BACKEND = 'app_metrics.backends.statsd'
 
     def test_metric(self):
-        with mock.patch('statsd.Client') as mock_client:
-            instance = mock_client.return_value
-            instance._send.return_value = 1
+        with mock.patch('statsd.StatsClient._send') as mock_client_send:
+            mock_client_send.return_value = 1
 
             metric('testing')
-            mock_client._send.assert_called_with(mock.ANY, {'testing': '1|c'})
+            mock_client_send.assert_called_with('testing:1|c')
 
             metric('testing', 2)
-            mock_client._send.assert_called_with(mock.ANY, {'testing': '2|c'})
+            mock_client_send.assert_called_with('testing:2|c')
 
             metric('another', 4)
-            mock_client._send.assert_called_with(mock.ANY, {'another': '4|c'})
+            mock_client_send.assert_called_with('another:4|c')
 
     def test_timing(self):
-        with mock.patch('statsd.Client') as mock_client:
-            instance = mock_client.return_value
-            instance._send.return_value = 1
+        with mock.patch('statsd.StatsClient._send') as mock_client_send:
+            mock_client_send.return_value = 1
 
             with timing('testing'):
                 time.sleep(0.025)
 
-            mock_client._send.assert_called_with(mock.ANY, {'testing.total': mock.ANY})
+            args, kwargs = mock_client_send.call_args
+            self.assertRegex(args[0], r'testing:\d{2}\.0000|ms')
 
     def test_gauge(self):
-        with mock.patch('statsd.Client') as mock_client:
-            instance = mock_client.return_value
-            instance._send.return_value = 1
+        with mock.patch('statsd.StatsClient._send') as mock_client_send:
+            mock_client_send.return_value = 1
 
             gauge('testing', 10.5)
-            mock_client._send.assert_called_with(mock.ANY, {'testing': '10.5|g'})
+            mock_client_send.assert_called_with('testing:10.5|g')
 
             gauge('testing', Decimal('6.576'))
-            mock_client._send.assert_called_with(mock.ANY, {'testing': '6.576|g'})
+            mock_client_send.assert_called_with('testing:6.576|g')
 
             gauge('another', 1)
-            mock_client._send.assert_called_with(mock.ANY, {'another': '1|g'})
+            mock_client_send.assert_called_with('another:1|g')
 
     def tearDown(self):
         settings.APP_METRICS_BACKEND = self.old_backend

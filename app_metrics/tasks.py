@@ -1,8 +1,9 @@
 import base64
 import json
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import datetime
+from decimal import Decimal
 
 try:
     from celery.task import task
@@ -82,56 +83,58 @@ def mixpanel_metric_task(slug, num, properties=None, **kwargs):
     url = getattr(settings, 'APP_METRICS_MIXPANEL_API_URL', "http://api.mixpanel.com/track/")
 
     params = {"event": slug, "properties": properties}
-    b64_data = base64.b64encode(json.dumps(params))
+    b64_data = base64.b64encode(json.dumps(params).encode('utf8'))
 
-    data = urllib.urlencode({"data": b64_data})
-    req = urllib2.Request(url, data)
+    data = urllib.parse.urlencode({"data": b64_data}).encode('utf8')
+    req = urllib.request.Request(url, data)
     for i in range(num):
-        response = urllib2.urlopen(req)
+        response = urllib.request.urlopen(req)
         if response.read() == '0':
-            raise MixPanelTrackError(u'MixPanel returned 0')
+            raise MixPanelTrackError('MixPanel returned 0')
 
 
 # Statsd tasks
 
-def get_statsd_conn():
+def get_statsd_client():
     if statsd is None:
         raise ImproperlyConfigured("You must install 'python-statsd' in order to use this backend.")
 
-    conn = statsd.Connection(
+    client = statsd.StatsClient(
         host=getattr(settings, 'APP_METRICS_STATSD_HOST', 'localhost'),
         port=int(getattr(settings, 'APP_METRICS_STATSD_PORT', 8125)),
-        sample_rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)),
     )
-    return conn
+    return client
 
 
 @task
 def statsd_metric_task(slug, num=1, **kwargs):
-    conn = get_statsd_conn()
-    counter = statsd.Counter(slug, connection=conn)
-    counter += num
+    client = get_statsd_client()
+    client.incr(slug, count=num, rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)))
 
 
 @task
 def statsd_timing_task(slug, seconds_taken=1.0, **kwargs):
-    conn = get_statsd_conn()
+    client = get_statsd_client()
 
     # You might be wondering "Why not use ``timer.start/.stop`` here?"
     # The problem is that this is a task, likely running out of process
     # & perhaps with network overhead. We'll measure the timing elsewhere,
     # in-process, to be as accurate as possible, then use the out-of-process
     # task for talking to the statsd backend.
-    timer = statsd.Timer(slug, connection=conn)
-    timer.send('total', seconds_taken)
+
+    # Must convert to milliseconds
+    # https://statsd.readthedocs.io/en/v3.3/timing.html#calling-timing-manually
+    client.timing(slug, int(seconds_taken * 1000), rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)))
 
 
 @task
 def statsd_gauge_task(slug, current_value, **kwargs):
-    conn = get_statsd_conn()
-    gauge = statsd.Gauge(slug, connection=conn)
-    # We send nothing here, since we only have one name/slug to work with here.
-    gauge.send('', current_value)
+    client = get_statsd_client()
+    if isinstance(current_value, str):
+        current_value = Decimal(current_value)
+
+    client.gauge(slug, current_value, rate=float(getattr(settings, 'APP_METRICS_STATSD_SAMPLE_RATE', 1)))
+
 
 # Redis tasks
 

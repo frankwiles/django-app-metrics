@@ -1,20 +1,21 @@
 import datetime
 from decimal import Decimal
-import unittest.mock
+from unittest import mock
 
 from django.test import TransactionTestCase, TestCase
 from django.core import management
 from django.conf import settings
 from django.core import mail
 from django.db import transaction, IntegrityError
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
+from django.utils import timezone
 
 from app_metrics.exceptions import TimerError
 from app_metrics.models import Metric, MetricItem, MetricDay, MetricWeek, MetricMonth, MetricYear, Gauge
 from app_metrics.utils import *
 from app_metrics.trending import _trending_for_current_day, _trending_for_yesterday, _trending_for_week, _trending_for_month, _trending_for_year
 
-class MetricCreationTests(TestCase):
 
 class MetricCreationTests(TransactionTestCase):
 
@@ -227,8 +228,8 @@ class TrendingTests(TestCase):
 class EmailTests(TestCase):
     """ Test that our emails send properly """
     def setUp(self):
-        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'user1pass')
-        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'user2pass')
+        self.user1 = get_user_model().objects.create_user('user1', 'user1@example.com', 'user1pass')
+        self.user2 = get_user_model().objects.create_user('user2', 'user2@example.com', 'user2pass')
         self.metric1 = create_metric(name='Test Trending1', slug='test_trend1')
         self.metric2 = create_metric(name='Test Trending2', slug='test_trend2')
         self.set = create_metric_set(name="Fake Report",
@@ -343,3 +344,32 @@ class MixpanelCommandTest2(TestCase):
 
     def tearDown(self):
         settings.APP_METRICS_BACKEND = self.old_backend
+
+class MockTimezone(datetime.tzinfo):
+    def utcoffset(self, dt):
+        return datetime.timedelta(hours=-9)
+
+class TimestampTest(TestCase):
+    """ Test timestamp utilities """
+
+    def test_tz_timestamp(self):
+        dt = datetime.datetime(2016, 5, 1, 0, 0, 0, tzinfo=timezone.utc)
+        utc_ts = get_timestamp(dt)
+        dt_tz = datetime.datetime(2016, 5, 1, 0, 0, 0, tzinfo=MockTimezone())
+        tz_ts = get_timestamp(dt_tz)
+
+        # timestamp with a UTC offset of -9 hours should be ahead by 32400 seconds.
+        self.assertEqual(utc_ts, tz_ts - 32400)
+
+    def test_naive_timestamp(self):
+        dt = datetime.datetime(2016, 5, 1, 0, 0, 0, tzinfo=None)
+
+        # Naive datetime to timestamp will just use local timezone. Same
+        # behavior as using strftime('%s') on 'nix systems.
+
+        # The above dt, even in a TZ of -12 hours would have to be more than
+        # or equal to 1462060800 (UTC) - 43200 seconds as a timestamp.
+        self.assertGreaterEqual(get_timestamp(dt), 1462060800 - 43200)
+
+        # However, it should be less than or equal to the same +12 hours.
+        self.assertLessEqual(get_timestamp(dt), 1462060800 + 43200)
